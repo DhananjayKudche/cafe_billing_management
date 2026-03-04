@@ -12,6 +12,30 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CafeBillingManagement">
         <activity
+            android:name=".Activities.PrinterDiscoveryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.DayCloseActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.ReportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.DashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.StockActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.HomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.SaleActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
