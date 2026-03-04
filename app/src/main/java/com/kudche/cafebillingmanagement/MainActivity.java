@@ -1,27 +1,41 @@
 package com.kudche.cafebillingmanagement;
 
+import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.cardview.widget.CardView;
 
-import com.kudche.cafebillingmanagement.Repository.SaleRepository;
+import com.kudche.cafebillingmanagement.Activities.BillingActivity;
+import com.kudche.cafebillingmanagement.Activities.ProductActivity;
+import com.kudche.cafebillingmanagement.Activities.RawMaterialActivity;
+import com.kudche.cafebillingmanagement.Activities.RecipeActivity;
+import com.kudche.cafebillingmanagement.R;
 
 public class MainActivity extends AppCompatActivity {
+
+    CardView billingCard, productCard, rawMaterialCard, recipeCard;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-        SaleRepository repo = new SaleRepository(this);
+
+        billingCard = findViewById(R.id.cardBilling);
+        productCard = findViewById(R.id.cardProduct);
+        rawMaterialCard = findViewById(R.id.cardRawMaterial);
+        recipeCard = findViewById(R.id.cardRecipe);
+
+        billingCard.setOnClickListener(v ->
+                startActivity(new Intent(this, BillingActivity.class)));
+
+        productCard.setOnClickListener(v ->
+                startActivity(new Intent(this, ProductActivity.class)));
+
+        rawMaterialCard.setOnClickListener(v ->
+                startActivity(new Intent(this, RawMaterialActivity.class)));
+
+        recipeCard.setOnClickListener(v ->
+                startActivity(new Intent(this, RecipeActivity.class)));
     }
 }

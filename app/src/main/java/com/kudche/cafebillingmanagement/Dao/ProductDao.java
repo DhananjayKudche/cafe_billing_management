@@ -1,6 +1,5 @@
 package com.kudche.cafebillingmanagement.Dao;
 
-
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
@@ -25,4 +24,12 @@ public interface ProductDao {
 
     @Query("SELECT * FROM products WHERE id = :id")
     Product getProductById(int id);
+
+    // Used for background operations like recipe setup
+    @Query("SELECT * FROM products")
+    List<Product> getAllSync();
+
+    @Query("SELECT * FROM products WHERE id = :id")
+    Product getByIdSync(int id);
+
 }

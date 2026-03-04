@@ -6,16 +6,15 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "sales")
 public class Sale {
 
-    @PrimaryKey(autoGenerate = true)
-    public int id;
 
-    public double totalAmount;
+        @PrimaryKey(autoGenerate = true)
+        public int id;
 
-    public String paymentType;
+        public double totalAmount;
 
-    public long createdAt;
+        public String paymentType;
 
-    public String createdBy;
+        public long createdAt;
 
-    public String printStatus = "PENDING";
-}
+        public String createdBy;
+    }

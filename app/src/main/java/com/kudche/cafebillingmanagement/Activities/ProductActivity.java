@@ -44,7 +44,7 @@ public class ProductActivity extends AppCompatActivity {
 
             product.name = name;
             product.price = Double.parseDouble(priceText);
-            product.currentStock = 0;
+            product.currentStock = 50;
             product.lowStockThreshold = 5;
 
             viewModel.addProduct(product);

@@ -12,22 +12,20 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CafeBillingManagement">
         <activity
+            android:name=".Activities.RecipeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.RawMaterialActivity"
+            android:exported="false" />
+        <activity
             android:name=".Activities.BillingActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:exported="false" />
         <activity
             android:name=".Activities.ProductListActivity"
-            android:exported="true">
-
-        </activity>
+            android:exported="false" />
         <activity
             android:name=".Activities.ProductActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".Activities.PrinterDiscoveryActivity"
             android:exported="false" />
@@ -54,7 +52,13 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="false" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

@@ -23,8 +23,8 @@
 
     <Button
         android:id="@+id/completeSale"
-        android:text="Complete Sale"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:text="Complete Sale"/>
 
 </LinearLayout>

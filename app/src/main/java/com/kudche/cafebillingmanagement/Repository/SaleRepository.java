@@ -1,6 +1,7 @@
 package com.kudche.cafebillingmanagement.Repository;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.kudche.cafebillingmanagement.Dao.ProductDao;
 import com.kudche.cafebillingmanagement.Dao.SaleDao;
@@ -18,48 +19,47 @@ public class SaleRepository {
     private final SaleDao saleDao;
 
     public SaleRepository(Context context) {
-
         db = AppDatabase.getInstance(context);
         productDao = db.productDao();
         saleDao = db.saleDao();
     }
 
-    public void createSale(List<SaleItem> items, String paymentType, String user) {
+    public void createSale(List<SaleItem> items) {
 
-        db.runInTransaction(() -> {
+        new Thread(() -> {
 
-            double total = 0;
+            db.runInTransaction(() -> {
 
-            for (SaleItem item : items) {
+                double total = 0;
 
-                Product product = productDao.getProductById(item.productId);
+                for (SaleItem item : items) {
 
-                if (product.currentStock < item.quantity) {
-                    throw new RuntimeException("Stock not available");
+                    Product product = productDao.getProductById(item.productId);
+
+                    // just reduce stock
+                    product.currentStock -= item.quantity;
+                    productDao.update(product);
+
+                    item.priceAtSale = product.price;
+                    total += product.price * item.quantity;
                 }
 
-                product.currentStock -= item.quantity;
-                productDao.update(product);
+                Sale sale = new Sale();
+                sale.totalAmount = total;
+                sale.paymentType = "CASH";
+                sale.createdAt = System.currentTimeMillis();
+                sale.createdBy = "admin";
 
-                item.priceAtSale = product.price;
+                long saleId = saleDao.insertSale(sale);
 
-                total += product.price * item.quantity;
-            }
+                for (SaleItem item : items) {
+                    item.saleId = (int) saleId;
+                }
 
-            Sale sale = new Sale();
-            sale.totalAmount = total;
-            sale.paymentType = paymentType;
-            sale.createdAt = System.currentTimeMillis();
-            sale.createdBy = user;
+                saleDao.insertSaleItems(items);
 
-            long saleId = saleDao.insertSale(sale);
+            });
 
-            for (SaleItem item : items) {
-                item.saleId = (int) saleId;
-            }
-
-            saleDao.insertSaleItems(items);
-
-        });
+        }).start();
     }
 }
