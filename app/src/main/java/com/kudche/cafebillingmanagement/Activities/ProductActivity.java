@@ -1,60 +1,82 @@
 package com.kudche.cafebillingmanagement.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.kudche.cafebillingmanagement.Adapters.ProductAdapter;
 import com.kudche.cafebillingmanagement.Models.Product;
 import com.kudche.cafebillingmanagement.R;
 import com.kudche.cafebillingmanagement.ViewModel.ProductViewModel;
 
+import java.util.ArrayList;
+
 public class ProductActivity extends AppCompatActivity {
 
-    private ProductViewModel viewModel;
-
-    EditText productName;
-    EditText productPrice;
+    ProductViewModel viewModel;
+    ProductAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product);
 
-        viewModel = new ViewModelProvider(this).get(ProductViewModel.class);
+        viewModel = new ViewModelProvider(this)
+                .get(ProductViewModel.class);
 
-        productName = findViewById(R.id.productName);
-        productPrice = findViewById(R.id.productPrice);
-        Button addProduct = findViewById(R.id.addProductBtn);
+        RecyclerView recycler =
+                findViewById(R.id.productRecycler);
 
-        addProduct.setOnClickListener(v -> {
+        recycler.setLayoutManager(
+                new LinearLayoutManager(this));
 
-            String name = productName.getText().toString().trim();
-            String priceText = productPrice.getText().toString().trim();
+        adapter = new ProductAdapter(
 
-            if(name.isEmpty() || priceText.isEmpty()) {
-                Toast.makeText(this, "Enter product name and price", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                product -> { // DELETE
 
-            Product product = new Product();
+                    new AlertDialog.Builder(this)
+                            .setTitle("Delete Product")
+                            .setMessage("Are you sure you want to delete "
+                                    + product.name + "?")
+                            .setPositiveButton("Yes",
+                                    (d,w)-> viewModel.delete(product))
+                            .setNegativeButton("No",null)
+                            .show();
+                },
 
-            product.name = name;
-            product.price = Double.parseDouble(priceText);
-            product.currentStock = 50;
-            product.lowStockThreshold = 5;
+                product -> { // EDIT
 
-            viewModel.addProduct(product);
+                    Intent intent = new Intent(
+                            this,
+                            AddProductActivity.class);
 
-            Toast.makeText(this, "Product added successfully", Toast.LENGTH_SHORT).show();
+                    intent.putExtra("productId",
+                            product.id);
 
-            productName.setText("");
-            productPrice.setText("");
+                    startActivity(intent);
+                }
+        );
 
-        });
+        recycler.setAdapter(adapter);
+
+        viewModel.getProducts().observe(this,
+                products -> adapter.setList(products));
+
+        FloatingActionButton fab =
+                findViewById(R.id.fabAddProduct);
+
+        fab.setOnClickListener(v ->
+                startActivity(
+                        new Intent(this,
+                                AddProductActivity.class)));
     }
-
 }

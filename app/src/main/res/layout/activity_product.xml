@@ -1,26 +1,31 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="20dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <EditText
-        android:id="@+id/productName"
-        android:hint="Product Name"
-        android:layout_width="match_parent"
+    <TextView
+        android:text="Add New Product"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:padding="16dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
-    <EditText
-        android:id="@+id/productPrice"
-        android:hint="Price"
-        android:inputType="numberDecimal"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/productRecycler"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
-    <Button
-        android:id="@+id/addProductBtn"
-        android:text="Add Product"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAddProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_margin="20dp"
+        android:src="@android:drawable/ic_input_add"
+        app:backgroundTint="#FF9800"/>
 
 </LinearLayout>

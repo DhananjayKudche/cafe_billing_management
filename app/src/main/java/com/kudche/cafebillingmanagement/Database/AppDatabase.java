@@ -9,11 +9,13 @@ import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.kudche.cafebillingmanagement.Dao.ProductDao;
+import com.kudche.cafebillingmanagement.Dao.ProductRawMaterialDao;
 import com.kudche.cafebillingmanagement.Dao.RawMaterialDao;
 import com.kudche.cafebillingmanagement.Dao.RecipeDao;
 import com.kudche.cafebillingmanagement.Dao.SaleDao;
 import com.kudche.cafebillingmanagement.Dao.StockDao;
 import com.kudche.cafebillingmanagement.Models.Product;
+import com.kudche.cafebillingmanagement.Models.ProductRawMaterial;
 import com.kudche.cafebillingmanagement.Models.RawMaterial;
 import com.kudche.cafebillingmanagement.Models.Recipe;
 import com.kudche.cafebillingmanagement.Models.Sale;
@@ -29,9 +31,10 @@ import java.util.concurrent.Executors;
                 SaleItem.class,
                 StockEntry.class,
                 RawMaterial.class,
-                Recipe.class
+                Recipe.class,
+                ProductRawMaterial.class
         },
-        version = 7
+        version = 8
 )
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -42,7 +45,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract StockDao stockDao();
     public abstract RawMaterialDao rawMaterialDao();
     public abstract RecipeDao recipeDao();
-
+    public abstract ProductRawMaterialDao productRawMaterialDao();
     public static synchronized AppDatabase getInstance(Context context) {
 
         if (instance == null) {

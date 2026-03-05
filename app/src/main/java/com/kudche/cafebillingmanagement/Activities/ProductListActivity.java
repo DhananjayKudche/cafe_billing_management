@@ -27,16 +27,16 @@ public class ProductListActivity extends AppCompatActivity {
 
         RecyclerView recyclerView = findViewById(R.id.productRecycler);
 
-        adapter = new ProductAdapter(null);
+//        adapter = new ProductAdapter(null);
 
         recyclerView.setLayoutManager(new GridLayoutManager(this,2));
         recyclerView.setAdapter(adapter);
 
         viewModel = new ViewModelProvider(this).get(ProductViewModel.class);
-
-        viewModel.getProducts().observe(this, products -> {
-            adapter.setProducts(products);
-        });
+//
+//        viewModel.getProducts().observe(this, products -> {
+//            adapter.setProducts(products);
+//        });
 
     }
 }

@@ -2,6 +2,7 @@ package com.kudche.cafebillingmanagement.Dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
@@ -19,6 +20,9 @@ public interface ProductDao {
     @Update
     void update(Product product);
 
+    @Delete
+    void delete(Product product);
+
     @Query("SELECT * FROM products WHERE isActive = 1")
     LiveData<List<Product>> getAllProducts();
 
@@ -27,7 +31,7 @@ public interface ProductDao {
 
     // Used for background operations like recipe setup
     @Query("SELECT * FROM products")
-    List<Product> getAllSync();
+    LiveData<List<Product>> getAll();
 
     @Query("SELECT * FROM products WHERE id = :id")
     Product getByIdSync(int id);
