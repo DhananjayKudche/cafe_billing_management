@@ -2,6 +2,7 @@ package com.kudche.cafebillingmanagement.Dao;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
@@ -31,5 +32,8 @@ public interface RawMaterialDao {
 
     @Query("SELECT * FROM raw_materials WHERE id = :id")
     RawMaterial getByIdSync(int id);
+
+    @Delete
+    void delete(RawMaterial rawMaterial);
 
 }

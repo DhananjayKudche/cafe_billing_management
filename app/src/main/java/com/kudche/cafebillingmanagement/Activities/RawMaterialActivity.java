@@ -1,5 +1,6 @@
 package com.kudche.cafebillingmanagement.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -8,6 +9,8 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.kudche.cafebillingmanagement.Adapters.RawMaterialAdapter;
 import com.kudche.cafebillingmanagement.R;
 
 import android.os.Bundle;
@@ -19,6 +22,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.kudche.cafebillingmanagement.Models.RawMaterial;
 import com.kudche.cafebillingmanagement.R;
@@ -27,10 +32,9 @@ import com.kudche.cafebillingmanagement.ViewModel.RawMaterialViewModel;
 public class RawMaterialActivity extends AppCompatActivity {
 
     RawMaterialViewModel viewModel;
-
-    EditText nameInput;
-    Spinner unitSpinner;
-    EditText stockInput;
+    RecyclerView recyclerView;
+    FloatingActionButton fab;
+    RawMaterialAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,33 +43,29 @@ public class RawMaterialActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(RawMaterialViewModel.class);
 
-        nameInput = findViewById(R.id.rawName);
-        unitSpinner = findViewById(R.id.rawUnit);
+        recyclerView = findViewById(R.id.rawRecycler);
+        fab = findViewById(R.id.fabAddRaw);
 
-        String[] units = {"GRAM", "ML"};
+        adapter = new RawMaterialAdapter(
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_dropdown_item,
-                units
+                material -> viewModel.delete(material),
+
+                material -> {
+                    Intent intent = new Intent(this, AddRawMaterialActivity.class);
+                    intent.putExtra("materialId", material.id);
+                    startActivity(intent);
+                }
         );
 
-        unitSpinner.setAdapter(adapter);
-        stockInput = findViewById(R.id.rawStock);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
 
-        Button addBtn = findViewById(R.id.addRawBtn);
+        viewModel.getAll().observe(this, materials -> {
+            adapter.setList(materials);
+        });
 
-        addBtn.setOnClickListener(v -> {
-
-            RawMaterial material = new RawMaterial();
-
-            material.name = nameInput.getText().toString();
-            material.unit = unitSpinner.getSelectedItem().toString();
-            material.currentStock = Double.parseDouble(stockInput.getText().toString());
-
-            viewModel.insert(material);
-
-            Toast.makeText(this,"Raw material added",Toast.LENGTH_SHORT).show();
+        fab.setOnClickListener(v -> {
+            startActivity(new Intent(this, AddRawMaterialActivity.class));
         });
     }
 }
