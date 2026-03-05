@@ -27,7 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kudche.cafebillingmanagement.Models.RawMaterial;
 import com.kudche.cafebillingmanagement.R;
-import com.kudche.cafebillingmanagement.ViewModel.RawMaterialViewModel;
+import com.kudche.cafebillingmanagement.ViewModel.RawMaterialViewModel;import androidx.appcompat.app.AlertDialog;
 
 public class RawMaterialActivity extends AppCompatActivity {
 
@@ -48,13 +48,25 @@ public class RawMaterialActivity extends AppCompatActivity {
 
         adapter = new RawMaterialAdapter(
 
-                material -> viewModel.delete(material),
+                material -> {
+
+                    new AlertDialog.Builder(this)
+                            .setTitle("Delete Raw Material")
+                            .setMessage("Are you sure you want to delete " + material.name + "?")
+                            .setPositiveButton("Delete", (dialog, which) -> {
+                                viewModel.delete(material);
+                                Toast.makeText(this, material.name + " deleted", Toast.LENGTH_SHORT).show();
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .show();
+                },
 
                 material -> {
                     Intent intent = new Intent(this, AddRawMaterialActivity.class);
                     intent.putExtra("materialId", material.id);
                     startActivity(intent);
                 }
+
         );
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
