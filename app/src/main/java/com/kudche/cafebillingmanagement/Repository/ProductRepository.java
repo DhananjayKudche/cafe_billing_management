@@ -8,9 +8,11 @@ import androidx.lifecycle.LiveData;
 
 import com.kudche.cafebillingmanagement.Dao.ProductDao;
 import com.kudche.cafebillingmanagement.Dao.ProductRawMaterialDao;
+import com.kudche.cafebillingmanagement.Dao.RawMaterialDao;
 import com.kudche.cafebillingmanagement.Database.AppDatabase;
 import com.kudche.cafebillingmanagement.Models.Product;
 import com.kudche.cafebillingmanagement.Models.ProductRawMaterial;
+import com.kudche.cafebillingmanagement.Models.RawMaterial;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -20,10 +22,13 @@ public class ProductRepository {
 
     private final ProductDao productDao;
     private final ProductRawMaterialDao mappingDao;
+
+    private final RawMaterialDao rawMaterialDao;
     private final LiveData<List<Product>> products;
     private final ExecutorService executor;
 
-    public ProductRepository(Application app){
+    public ProductRepository(Application app, RawMaterialDao rawMaterialDao){
+        this.rawMaterialDao = rawMaterialDao;
 
         AppDatabase db = AppDatabase.getInstance(app);
 
@@ -57,10 +62,13 @@ public class ProductRepository {
         executor.execute(() -> {
 
             productDao.update(product);
+
             mappingDao.deleteByProduct(product.id);
 
             for(ProductRawMaterial m : materials){
+
                 m.productId = product.id;
+
                 mappingDao.insert(m);
             }
         });
@@ -69,4 +77,36 @@ public class ProductRepository {
     public void delete(Product product){
         executor.execute(() -> productDao.delete(product));
     }
+
+    public void deleteAllProducts(){
+        executor.execute(() -> {
+            productDao.deleteAll();
+        });
+    }
+
+//    public Product getProductById(int id){
+//        return productDao.getProductById(id);
+//    }
+//
+//    public List<ProductRawMaterial> getMaterialsByProduct(int productId){
+//        return mappingDao.getByProduct(productId);
+//    }
+//
+//    public ProductRawMaterial getRawMaterialById(int id){
+//        return mappingDao.getById(id);
+//    }
+
+    public Product getProductById(int id){
+        return productDao.getById(id);
+    }
+
+    public List<ProductRawMaterial> getMaterialsByProduct(int productId){
+        return mappingDao.getByProduct(productId);
+    }
+
+    public RawMaterial getRawMaterialById(int id){
+        return rawMaterialDao.getById(id);
+    }
+
+
 }

@@ -23,10 +23,16 @@ public interface ProductDao {
     @Delete
     void delete(Product product);
 
+    @Query("DELETE FROM products")
+    void deleteAll();
+
+    @Query("SELECT * FROM products WHERE id=:id")
+    Product getById(int id);
+
     @Query("SELECT * FROM products WHERE isActive = 1")
     LiveData<List<Product>> getAllProducts();
 
-    @Query("SELECT * FROM products WHERE id = :id")
+    @Query("SELECT * FROM products WHERE id = :id LIMIT 1")
     Product getProductById(int id);
 
     // Used for background operations like recipe setup

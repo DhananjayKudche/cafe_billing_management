@@ -38,20 +38,7 @@ public class ProductActivity extends AppCompatActivity {
 
         recycler.setLayoutManager(
                 new LinearLayoutManager(this));
-
         adapter = new ProductAdapter(
-
-                product -> { // DELETE
-
-                    new AlertDialog.Builder(this)
-                            .setTitle("Delete Product")
-                            .setMessage("Are you sure you want to delete "
-                                    + product.name + "?")
-                            .setPositiveButton("Yes",
-                                    (d,w)-> viewModel.delete(product))
-                            .setNegativeButton("No",null)
-                            .show();
-                },
 
                 product -> { // EDIT
 
@@ -59,10 +46,20 @@ public class ProductActivity extends AppCompatActivity {
                             this,
                             AddProductActivity.class);
 
-                    intent.putExtra("productId",
-                            product.id);
+                    intent.putExtra("productId", product.id);
 
                     startActivity(intent);
+                },
+
+                product -> { // DELETE
+
+                    new AlertDialog.Builder(this)
+                            .setTitle("Delete Product")
+                            .setMessage("Delete " + product.name + "?")
+                            .setPositiveButton("Yes",
+                                    (d,w)-> viewModel.delete(product))
+                            .setNegativeButton("No",null)
+                            .show();
                 }
         );
 

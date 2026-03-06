@@ -11,14 +11,9 @@ import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.kudche.cafebillingmanagement.Models.Product;
@@ -30,6 +25,7 @@ import com.kudche.cafebillingmanagement.ViewModel.RawMaterialViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 public class AddProductActivity extends AppCompatActivity {
 
@@ -45,6 +41,8 @@ public class AddProductActivity extends AppCompatActivity {
     List<ProductRawMaterial> selectedMaterials = new ArrayList<>();
     List<RawMaterial> rawMaterials = new ArrayList<>();
 
+    int productId = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +56,11 @@ public class AddProductActivity extends AppCompatActivity {
         addMaterialBtn = findViewById(R.id.addMaterialBtn);
         priceSeekBar = findViewById(R.id.priceSeekBar);
         priceText = findViewById(R.id.priceText);
+        productId = getIntent().getIntExtra("productId",-1);
+
+        if(productId != -1){
+            loadProductData();
+        }
 
         rawViewModel.getAll().observe(this, list -> rawMaterials = list);
 
@@ -75,6 +78,39 @@ public class AddProductActivity extends AppCompatActivity {
         findViewById(R.id.saveProductBtn).setOnClickListener(v -> saveProduct());
         findViewById(R.id.cancelBtn).setOnClickListener(v -> finish());
     }
+
+    private void loadProductData(){
+
+        Executors.newSingleThreadExecutor().execute(() -> {
+
+            Product product = viewModel.getProductById(productId);
+
+            List<ProductRawMaterial> materials =
+                    viewModel.getMaterialsByProduct(productId);
+
+            runOnUiThread(() -> {
+
+                nameInput.setText(product.name);
+
+                priceSeekBar.setProgress((int) product.price);
+
+                for(ProductRawMaterial m : materials){
+
+//                    ProductRawMaterial raw = viewModel.getRawMaterialById(m.rawMaterialId);
+                    viewModel.getRawMaterialById(m.rawMaterialId, raw -> {
+
+                        addMaterialView(
+                                raw.name,
+                                m.quantityRequired,
+                                raw.unit
+                        );
+
+                    });
+                }
+            });
+        });
+    }
+
 
     private void showMaterialSelector() {
 
@@ -142,20 +178,23 @@ public class AddProductActivity extends AppCompatActivity {
 
     private void saveProduct(){
 
-        if(nameInput.getText().toString().isEmpty()){
-            Toast.makeText(this,
-                    "Enter product name",
-                    Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         Product product = new Product();
+
         product.name = nameInput.getText().toString();
         product.price = priceSeekBar.getProgress();
         product.currentStock = 50;
         product.lowStockThreshold = 5;
 
-        viewModel.insertProduct(product, selectedMaterials);
+        if(productId == -1){
+
+            viewModel.insertProduct(product, selectedMaterials);
+
+        }else{
+
+            product.id = productId;
+
+            viewModel.updateProduct(product, selectedMaterials);
+        }
 
         finish();
     }

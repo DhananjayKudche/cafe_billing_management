@@ -19,4 +19,12 @@ public interface ProductRawMaterialDao {
 
     @Query("SELECT * FROM product_raw_material WHERE productId = :productId")
     List<ProductRawMaterial> getByProductSync(int productId);
+
+    @Query("SELECT * FROM product_raw_material WHERE productId = :productId")
+    List<ProductRawMaterial> getByProduct(int productId);
+
+    @Query("SELECT * FROM product_raw_material WHERE id = :id LIMIT 1")
+    ProductRawMaterial getById(int id);
+
+    
 }
