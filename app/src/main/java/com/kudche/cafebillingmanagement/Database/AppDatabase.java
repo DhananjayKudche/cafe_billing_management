@@ -7,11 +7,14 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.kudche.cafebillingmanagement.Dao.DayCloseDao;
 import com.kudche.cafebillingmanagement.Dao.ProductDao;
 import com.kudche.cafebillingmanagement.Dao.ProductRawMaterialDao;
 import com.kudche.cafebillingmanagement.Dao.RawMaterialDao;
 import com.kudche.cafebillingmanagement.Dao.SaleDao;
 import com.kudche.cafebillingmanagement.Dao.StockDao;
+import com.kudche.cafebillingmanagement.Models.DayClose;
+import com.kudche.cafebillingmanagement.Models.DayCloseItem;
 import com.kudche.cafebillingmanagement.Models.Product;
 import com.kudche.cafebillingmanagement.Models.ProductRawMaterial;
 import com.kudche.cafebillingmanagement.Models.RawMaterial;
@@ -28,9 +31,11 @@ import java.util.concurrent.Executors;
                 SaleItem.class,
                 StockEntry.class,
                 RawMaterial.class,
-                ProductRawMaterial.class
+                ProductRawMaterial.class,
+                DayClose.class,
+                DayCloseItem.class
         },
-        version = 11 // Incremented to 11 to force a wipe and apply new default image paths
+        version = 14
 )
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -41,6 +46,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract StockDao stockDao();
     public abstract RawMaterialDao rawMaterialDao();
     public abstract ProductRawMaterialDao productRawMaterialDao();
+    public abstract DayCloseDao dayCloseDao();
 
     public static synchronized AppDatabase getInstance(Context context) {
         if (instance == null) {

@@ -1,30 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="10"
+    android:background="@color/white">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/productRecycler"
-        android:layout_height="300dp"
-        android:layout_width="match_parent"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/cartRecycler"
-        android:layout_height="200dp"
-        android:layout_width="match_parent"/>
-
-    <TextView
-        android:id="@+id/totalAmount"
-        android:text="Total: ₹0"
-        android:textSize="20sp"
-        android:padding="10dp"
+    <!-- Product Selection Section (50%) -->
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="0dp"
+        android:layout_weight="5"
+        android:orientation="vertical"
+        android:padding="8dp">
 
-    <Button
-        android:id="@+id/completeSale"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Select Products"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_marginBottom="4dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <Button
+                android:id="@+id/prevProductBtn"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="&lt;"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/black"
+                android:visibility="gone"
+                android:padding="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/productRecycler"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"/>
+
+            <Button
+                android:id="@+id/nextProductBtn"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="&gt;"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/black"
+                android:visibility="gone"
+                android:padding="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <View
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Complete Sale"/>
+        android:layout_height="1dp"
+        android:background="#CCCCCC"/>
+
+    <!-- Cart Section (30%) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Selected Items"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:layout_marginBottom="4dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <Button
+                android:id="@+id/prevCartBtn"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="&lt;"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/black"
+                android:visibility="gone"
+                android:padding="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp">
+
+                <include layout="@layout/layout_cart_header" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/cartRecycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/nextCartBtn"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="&gt;"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/black"
+                android:visibility="gone"
+                android:padding="0dp"
+                android:minWidth="0dp"
+                android:minHeight="0dp"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Bottom Action Bar (20%) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/totalAmount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total: ₹0"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginBottom="16dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/cancelSaleBtn"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Cancel"
+                android:textColor="@color/white"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="#FF5722"
+                android:textSize="18sp"/>
+
+            <Button
+                android:id="@+id/completeSale"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Print"
+                android:textColor="@color/white"
+                android:backgroundTint="#4CAF50"
+                android:textSize="18sp"/>
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

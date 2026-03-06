@@ -1,13 +1,9 @@
 package com.kudche.cafebillingmanagement.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
 import com.kudche.cafebillingmanagement.R;
 
 public class DashboardActivity extends AppCompatActivity {
@@ -15,12 +11,21 @@ public class DashboardActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_dashboard);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        // Navigation to Billing
+        findViewById(R.id.cardBilling).setOnClickListener(v -> {
+            startActivity(new Intent(this, BillingActivity.class));
+        });
+
+        // Navigation to Products
+        findViewById(R.id.cardProduct).setOnClickListener(v -> {
+            startActivity(new Intent(this, ProductListActivity.class));
+        });
+
+        // Navigation to Sale History
+        findViewById(R.id.cardHistory).setOnClickListener(v -> {
+            startActivity(new Intent(this, SaleHistoryActivity.class));
         });
     }
 }

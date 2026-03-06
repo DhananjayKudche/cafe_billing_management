@@ -1,5 +1,6 @@
 package com.kudche.cafebillingmanagement.Dao;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
@@ -20,4 +21,10 @@ public interface SaleDao {
 
     @Query("SELECT SUM(totalAmount) FROM sales")
     Double getTotalSales();
+
+    @Query("SELECT * FROM sales ORDER BY createdAt DESC")
+    LiveData<List<Sale>> getAllSales();
+
+    @Query("SELECT * FROM sale_items WHERE saleId = :saleId")
+    List<SaleItem> getItemsForSale(int saleId);
 }

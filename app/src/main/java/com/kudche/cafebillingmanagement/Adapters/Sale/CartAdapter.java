@@ -3,7 +3,6 @@ package com.kudche.cafebillingmanagement.Adapters.Sale;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -37,24 +36,21 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_cart,parent,false);
-
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-
         CartItem item = cartItems.get(position);
 
         holder.name.setText(item.product.name);
         holder.qty.setText(String.valueOf(item.quantity));
-        holder.price.setText("₹" + item.getTotalPrice());
+        holder.price.setText("₹" + (int)item.product.price);
+        holder.amount.setText("₹" + (int)item.getTotalPrice());
 
         holder.plus.setOnClickListener(v -> listener.onIncrease(item));
-
         holder.minus.setOnClickListener(v -> listener.onDecrease(item));
     }
 
@@ -64,17 +60,15 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder>{
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-
-        TextView name, qty, price;
+        TextView name, qty, price, amount;
         ImageButton plus, minus;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-
             name = itemView.findViewById(R.id.cartName);
             qty = itemView.findViewById(R.id.cartQty);
             price = itemView.findViewById(R.id.cartPrice);
-
+            amount = itemView.findViewById(R.id.cartAmount);
             plus = itemView.findViewById(R.id.btnPlus);
             minus = itemView.findViewById(R.id.btnMinus);
         }

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:layout_marginBottom="8dp"
+    android:background="#F9F9F9">
+
+    <TextView
+        android:id="@+id/reconcileMaterialName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Material Name"
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:textSize="16sp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="4dp">
+
+        <TextView
+            android:id="@+id/reconcileExpectedText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Expected: 0 ML"
+            android:textSize="14sp"/>
+
+        <EditText
+            android:id="@+id/reconcileActualInput"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:hint="Actual"
+            android:inputType="numberDecimal"
+            android:textSize="14sp"/>
+    </LinearLayout>
+
+</LinearLayout>

@@ -57,6 +57,9 @@
             android:name=".Activities.SaleActivity"
             android:exported="false" />
         <activity
+            android:name=".Activities.SaleHistoryActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
