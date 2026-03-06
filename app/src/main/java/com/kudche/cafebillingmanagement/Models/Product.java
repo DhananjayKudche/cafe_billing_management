@@ -21,6 +21,8 @@ public class Product {
 
     public boolean isActive = true;
 
+    public String imagePath; // Stores the URI or path of the product image
+
     @Override
     public String toString() {
         return name;

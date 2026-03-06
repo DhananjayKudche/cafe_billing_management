@@ -1,14 +1,14 @@
 package com.kudche.cafebillingmanagement.Repository;
 
-import android.content.Context;
-import android.util.Log;
 
+import android.content.Context;
 import com.kudche.cafebillingmanagement.Dao.ProductDao;
 import com.kudche.cafebillingmanagement.Dao.SaleDao;
 import com.kudche.cafebillingmanagement.Database.AppDatabase;
 import com.kudche.cafebillingmanagement.Models.Product;
 import com.kudche.cafebillingmanagement.Models.Sale;
 import com.kudche.cafebillingmanagement.Models.SaleItem;
+import com.kudche.cafebillingmanagement.Utils.StockManager;
 
 import java.util.List;
 
@@ -25,20 +25,17 @@ public class SaleRepository {
     }
 
     public void createSale(List<SaleItem> items) {
-
+        // Run database operations in a single transaction
         new Thread(() -> {
-
             db.runInTransaction(() -> {
-
                 double total = 0;
 
                 for (SaleItem item : items) {
+                    Product product = productDao.getByIdSync(item.productId);
+                    if (product == null) continue;
 
-                    Product product = productDao.getProductById(item.productId);
-
-                    // just reduce stock
-                    product.currentStock -= item.quantity;
-                    productDao.update(product);
+                    // This handles BOTH raw material reduction AND product stock reduction (1x)
+                    StockManager.deductStock(db, item.productId, item.quantity);
 
                     item.priceAtSale = product.price;
                     total += product.price * item.quantity;
@@ -57,9 +54,7 @@ public class SaleRepository {
                 }
 
                 saleDao.insertSaleItems(items);
-
             });
-
         }).start();
     }
 }

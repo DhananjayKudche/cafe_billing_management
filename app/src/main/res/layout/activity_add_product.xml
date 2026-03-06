@@ -7,77 +7,97 @@
     android:layout_height="match_parent"
     tools:context=".Activities.AddProductActivity">
 
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="vertical"
-        android:padding="16dp"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <TextView
-            android:text="Add New Product"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <!-- Product Name -->
-        <EditText
-            android:id="@+id/productName"
-            android:hint="Product Name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <!-- Container where selected materials will appear -->
         <LinearLayout
-            android:id="@+id/materialContainer"
             android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <!-- Add Raw Material Button -->
-        <Button
-            android:id="@+id/addMaterialBtn"
-            android:text="+ Add Raw Material"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <!-- Price -->
-        <TextView
-            android:id="@+id/priceText"
-            android:text="₹ 0"
-            android:layout_marginTop="16dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <SeekBar
-            android:id="@+id/priceSeekBar"
-            android:max="500"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-
-        <!-- Buttons -->
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_marginTop="16dp"
+            android:padding="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <Button
-                android:id="@+id/cancelBtn"
-                android:text="Cancel"
-                android:layout_weight="1"
-                android:layout_width="0dp"
+            <TextView
+                android:text="Add New Product"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"/>
 
+            <!-- Product Image -->
+            <ImageView
+                android:id="@+id/productImage"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:scaleType="centerCrop"
+                android:src="@android:drawable/ic_menu_gallery"
+                android:background="#DDDDDD" />
+
             <Button
-                android:id="@+id/saveProductBtn"
-                android:text="Add Product"
-                android:layout_weight="1"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"/>
+                android:id="@+id/selectImageBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Select Image" />
+
+            <!-- Product Name -->
+            <EditText
+                android:id="@+id/productName"
+                android:hint="Product Name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"/>
+
+            <!-- Price -->
+            <EditText
+                android:id="@+id/productPrice"
+                android:hint="Price (₹)"
+                android:inputType="numberDecimal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"/>
+
+            <!-- Container where selected materials will appear -->
+            <LinearLayout
+                android:id="@+id/materialContainer"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"/>
+
+            <!-- Add Raw Material Button -->
+            <Button
+                android:id="@+id/addMaterialBtn"
+                android:text="+ Add Raw Material"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"/>
+
+            <!-- Buttons -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginTop="24dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/cancelBtn"
+                    android:text="Cancel"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
+
+                <Button
+                    android:id="@+id/saveProductBtn"
+                    android:text="Save Product"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
         </LinearLayout>
-
-    </LinearLayout>
+    </ScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
