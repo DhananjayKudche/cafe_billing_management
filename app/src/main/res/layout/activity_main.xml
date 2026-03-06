@@ -9,15 +9,32 @@
     android:background="#F5F5F5"
     android:gravity="center_horizontal">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Aaradhya Cafe"
-        android:textSize="26sp"
-        android:textColor="@color/black"
-        android:layout_marginTop="32dp"
-        android:layout_marginBottom="32dp"
-        app:fontFamily="@font/lobster_regular" />
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Aaradhya Cafe"
+            android:textSize="26sp"
+            android:textColor="@color/black"
+            app:fontFamily="@font/lobster_regular" />
+
+        <ImageView
+            android:id="@+id/ivSettings"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_settings"
+            android:clickable="true"
+            android:focusable="true"
+            app:tint="@color/black" />
+    </RelativeLayout>
 
     <GridLayout
         android:layout_width="match_parent"

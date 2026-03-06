@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -18,11 +18,13 @@ import com.kudche.cafebillingmanagement.Activities.ProductListActivity;
 import com.kudche.cafebillingmanagement.Activities.RawMaterialActivity;
 import com.kudche.cafebillingmanagement.Activities.ReportActivity;
 import com.kudche.cafebillingmanagement.Activities.SaleHistoryActivity;
+import com.kudche.cafebillingmanagement.Activities.SettingsActivity;
 import com.kudche.cafebillingmanagement.Utils.PermissionHelper;
 
 public class MainActivity extends AppCompatActivity {
 
     CardView billingCard, historyCard, productCard, inventoryCard, dayCloseCard, reportsCard;
+    ImageView ivSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +40,14 @@ public class MainActivity extends AppCompatActivity {
         inventoryCard = findViewById(R.id.cardRawMaterial);
         dayCloseCard = findViewById(R.id.cardDayClose);
         reportsCard = findViewById(R.id.cardReports);
+        ivSettings = findViewById(R.id.ivSettings);
         
         // Role-based visibility
         if ("WORKER".equals(role)) {
             if (reportsCard != null) reportsCard.setVisibility(View.GONE);
             if (productCard != null) productCard.setVisibility(View.GONE);
             if (inventoryCard != null) inventoryCard.setVisibility(View.GONE);
+            if (ivSettings != null) ivSettings.setVisibility(View.GONE);
         }
 
         billingCard.setOnClickListener(v ->
@@ -68,6 +72,11 @@ public class MainActivity extends AppCompatActivity {
         if (reportsCard != null && reportsCard.getVisibility() == View.VISIBLE) {
             reportsCard.setOnClickListener(v ->
                     startActivity(new Intent(this, ReportActivity.class)));
+        }
+
+        if (ivSettings != null) {
+            ivSettings.setOnClickListener(v ->
+                    startActivity(new Intent(this, SettingsActivity.class)));
         }
         
         // Logout functionality
