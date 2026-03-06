@@ -160,7 +160,7 @@
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@drawable/ic_remove"
+                    android:src="@drawable/ic_day_close"
                     app:tint="@color/black"/>
                 <TextView
                     android:layout_width="wrap_content"
