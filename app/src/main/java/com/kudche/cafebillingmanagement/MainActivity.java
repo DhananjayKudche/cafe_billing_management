@@ -5,7 +5,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
@@ -16,6 +18,7 @@ import com.kudche.cafebillingmanagement.Activities.ProductListActivity;
 import com.kudche.cafebillingmanagement.Activities.RawMaterialActivity;
 import com.kudche.cafebillingmanagement.Activities.ReportActivity;
 import com.kudche.cafebillingmanagement.Activities.SaleHistoryActivity;
+import com.kudche.cafebillingmanagement.Utils.PermissionHelper;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,7 +44,6 @@ public class MainActivity extends AppCompatActivity {
             if (reportsCard != null) reportsCard.setVisibility(View.GONE);
             if (productCard != null) productCard.setVisibility(View.GONE);
             if (inventoryCard != null) inventoryCard.setVisibility(View.GONE);
-            // Worker can do Billing, Sale History, and Day Close
         }
 
         billingCard.setOnClickListener(v ->
@@ -68,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(this, ReportActivity.class)));
         }
         
-        // Logout functionality (Long press on background)
+        // Logout functionality
         findViewById(R.id.main_layout).setOnLongClickListener(v -> {
             new androidx.appcompat.app.AlertDialog.Builder(this)
                     .setTitle("Logout")
@@ -82,5 +84,22 @@ public class MainActivity extends AppCompatActivity {
                     .show();
             return true;
         });
+
+        // Request Printer Permissions on Start
+        if (!PermissionHelper.hasPrintPermissions(this)) {
+            PermissionHelper.requestPrintPermissions(this);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PermissionHelper.REQ_CODE_PRINT_PERMISSIONS) {
+            if (PermissionHelper.hasPrintPermissions(this)) {
+                Toast.makeText(this, "Printer permissions granted", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Printer permissions are required for billing", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }

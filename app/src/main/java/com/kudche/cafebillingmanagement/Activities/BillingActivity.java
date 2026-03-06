@@ -18,9 +18,11 @@ import com.kudche.cafebillingmanagement.Adapters.Sale.CartAdapter;
 import com.kudche.cafebillingmanagement.Database.AppDatabase;
 import com.kudche.cafebillingmanagement.Models.CartItem;
 import com.kudche.cafebillingmanagement.Models.Product;
+import com.kudche.cafebillingmanagement.Models.Sale;
 import com.kudche.cafebillingmanagement.Models.SaleItem;
 import com.kudche.cafebillingmanagement.R;
 import com.kudche.cafebillingmanagement.Repository.SaleRepository;
+import com.kudche.cafebillingmanagement.Utils.PrinterUtils;
 import com.kudche.cafebillingmanagement.Utils.StockManager;
 import com.kudche.cafebillingmanagement.ViewModel.ProductViewModel;
 
@@ -144,14 +146,26 @@ public class BillingActivity extends AppCompatActivity
             saleItems.add(item);
         }
 
-        saleRepository.createSale(saleItems, isEmergency);
+        saleRepository.createSale(saleItems, isEmergency, new SaleRepository.SaleCallback() {
+            @Override
+            public void onSuccess(Sale sale, List<SaleItem> items) {
+                runOnUiThread(() -> {
+                    Toast.makeText(BillingActivity.this, isEmergency ? "Emergency Sale Recorded" : "Sale Completed", Toast.LENGTH_SHORT).show();
+                    
+                    // Trigger Print
+                    PrinterUtils.printReceipt(BillingActivity.this, sale, items);
+                    
+                    cartItems.clear();
+                    cartPage = 0;
+                    updateCart();
+                    updateProductQuantities();
+                });
+            }
 
-        runOnUiThread(() -> {
-            Toast.makeText(this, isEmergency ? "Emergency Sale Recorded" : "Sale Completed", Toast.LENGTH_SHORT).show();
-            cartItems.clear();
-            cartPage = 0;
-            updateCart();
-            updateProductQuantities();
+            @Override
+            public void onError(String message) {
+                runOnUiThread(() -> Toast.makeText(BillingActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show());
+            }
         });
     }
 

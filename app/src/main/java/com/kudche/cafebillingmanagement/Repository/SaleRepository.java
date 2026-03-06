@@ -20,48 +20,62 @@ public class SaleRepository {
     private final ProductDao productDao;
     private final SaleDao saleDao;
 
+    public interface SaleCallback {
+        void onSuccess(Sale sale, List<SaleItem> items);
+        void onError(String message);
+    }
+
     public SaleRepository(Context context) {
         db = AppDatabase.getInstance(context);
         productDao = db.productDao();
         saleDao = db.saleDao();
     }
 
-    public void createSale(List<SaleItem> items, boolean isEmergency) {
+    public void createSale(List<SaleItem> items, boolean isEmergency, SaleCallback callback) {
         new Thread(() -> {
-            db.runInTransaction(() -> {
-                double total = 0;
-                long timestamp = System.currentTimeMillis();
-                String invoiceNo = "INV-" + new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date());
+            try {
+                db.runInTransaction(() -> {
+                    double total = 0;
+                    long timestamp = System.currentTimeMillis();
+                    String invoiceNo = "INV-" + new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date());
 
-                for (SaleItem item : items) {
-                    Product product = productDao.getByIdSync(item.productId);
-                    if (product == null) continue;
+                    for (SaleItem item : items) {
+                        Product product = productDao.getByIdSync(item.productId);
+                        if (product == null) continue;
 
-                    // Deduct stock
-                    StockManager.deductStock(db, item.productId, item.quantity);
+                        // Deduct stock
+                        StockManager.deductStock(db, item.productId, item.quantity);
 
-                    item.priceAtSale = product.price;
-                    total += product.price * item.quantity;
-                }
+                        item.priceAtSale = product.price;
+                        total += product.price * item.quantity;
+                    }
 
-                Sale sale = new Sale();
-                sale.invoiceNumber = invoiceNo;
-                sale.totalAmount = total;
-                sale.subTotal = total;
-                sale.taxAmount = 0;
-                sale.discountAmount = 0;
-                sale.paymentType = "CASH";
-                sale.createdAt = timestamp;
-                sale.createdBy = "admin";
-                sale.isSynced = false;
-                sale.isEmergencySale = isEmergency;
+                    Sale sale = new Sale();
+                    sale.invoiceNumber = invoiceNo;
+                    sale.totalAmount = total;
+                    sale.subTotal = total;
+                    sale.taxAmount = 0;
+                    sale.discountAmount = 0;
+                    sale.paymentType = "CASH";
+                    sale.createdAt = timestamp;
+                    sale.createdBy = "admin";
+                    sale.isSynced = false;
+                    sale.isEmergencySale = isEmergency;
 
-                long saleId = saleDao.insertSale(sale);
-                for (SaleItem item : items) {
-                    item.saleId = (int) saleId;
-                }
-                saleDao.insertSaleItems(items);
-            });
+                    long saleId = saleDao.insertSale(sale);
+                    sale.id = (int) saleId;
+                    for (SaleItem item : items) {
+                        item.saleId = (int) saleId;
+                    }
+                    saleDao.insertSaleItems(items);
+                    
+                    if (callback != null) {
+                        callback.onSuccess(sale, items);
+                    }
+                });
+            } catch (Exception e) {
+                if (callback != null) callback.onError(e.getMessage());
+            }
         }).start();
     }
 
