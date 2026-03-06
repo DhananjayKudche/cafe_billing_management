@@ -18,8 +18,6 @@ public class StockManager {
         } else {
             List<ProductRawMaterial> mappings = db.productRawMaterialDao().getByProductSync(productId);
             if (mappings == null || mappings.isEmpty()) {
-                // If it's marked as having a recipe but has no ingredients,
-                // fallback to checking product stock or return false.
                 return product.currentStock >= quantitySold;
             }
 
@@ -34,31 +32,37 @@ public class StockManager {
     }
 
     public static void deductStock(AppDatabase db, int productId, int quantitySold) {
+        adjustStock(db, productId, quantitySold, true);
+    }
+
+    public static void addStock(AppDatabase db, int productId, int quantitySold) {
+        adjustStock(db, productId, quantitySold, false);
+    }
+
+    private static void adjustStock(AppDatabase db, int productId, int quantity, boolean isDeduction) {
         Product product = db.productDao().getByIdSync(productId);
         if (product == null) return;
 
+        int multiplier = isDeduction ? 1 : -1;
+
         if (!product.hasRecipe) {
-            // Case 1: Direct Product Sale (e.g. Bottled Water, Sandwich)
-            product.currentStock -= quantitySold;
+            product.currentStock -= (quantity * multiplier);
             db.productDao().update(product);
         } else {
-            // Case 2: Prepared Product (e.g. Coffee)
             List<ProductRawMaterial> mappings = db.productRawMaterialDao().getByProductSync(productId);
 
             if (mappings != null && !mappings.isEmpty()) {
                 for (ProductRawMaterial map : mappings) {
                     RawMaterial material = db.rawMaterialDao().getByIdSync(map.rawMaterialId);
                     if (material != null) {
-                        material.currentStock -= (map.quantityRequired * quantitySold);
+                        material.currentStock -= (map.quantityRequired * quantity * multiplier);
                         db.rawMaterialDao().update(material);
                     }
                 }
-                // Optional: Reduce product stock too (if used for "total items sold" tracking)
-                product.currentStock -= quantitySold;
+                product.currentStock -= (quantity * multiplier);
                 db.productDao().update(product);
             } else {
-                // Fallback if recipe is missing
-                product.currentStock -= quantitySold;
+                product.currentStock -= (quantity * multiplier);
                 db.productDao().update(product);
             }
         }

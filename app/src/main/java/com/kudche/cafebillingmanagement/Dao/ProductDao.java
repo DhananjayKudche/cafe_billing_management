@@ -42,4 +42,6 @@ public interface ProductDao {
     @Query("SELECT * FROM products WHERE id = :id")
     Product getByIdSync(int id);
 
+    @Query("SELECT * FROM products")
+    List<Product> getAllSync();
 }

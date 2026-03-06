@@ -27,21 +27,17 @@ public class SaleRepository {
     }
 
     public void createSale(List<SaleItem> items, boolean isEmergency) {
-
         new Thread(() -> {
-
             db.runInTransaction(() -> {
-
                 double total = 0;
                 long timestamp = System.currentTimeMillis();
-
                 String invoiceNo = "INV-" + new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date());
 
                 for (SaleItem item : items) {
                     Product product = productDao.getByIdSync(item.productId);
                     if (product == null) continue;
 
-                    // Deduct stock (Will go negative if isEmergency is true)
+                    // Deduct stock
                     StockManager.deductStock(db, item.productId, item.quantity);
 
                     item.priceAtSale = product.price;
@@ -58,18 +54,36 @@ public class SaleRepository {
                 sale.createdAt = timestamp;
                 sale.createdBy = "admin";
                 sale.isSynced = false;
-                sale.isEmergencySale = isEmergency; // Mark if stock was bypassed
+                sale.isEmergencySale = isEmergency;
 
                 long saleId = saleDao.insertSale(sale);
-
                 for (SaleItem item : items) {
                     item.saleId = (int) saleId;
                 }
-
                 saleDao.insertSaleItems(items);
-
             });
+        }).start();
+    }
 
+    /**
+     * Deletes a sale and REVERTS the stock deducted.
+     */
+    public void deleteSale(int saleId, Runnable onSuccess) {
+        new Thread(() -> {
+            db.runInTransaction(() -> {
+                Sale sale = saleDao.getSaleById(saleId);
+                if (sale == null) return;
+
+                List<SaleItem> items = saleDao.getItemsForSale(saleId);
+                for (SaleItem item : items) {
+                    // Revert stock: Add back what was sold
+                    StockManager.addStock(db, item.productId, item.quantity);
+                }
+
+                saleDao.deleteSaleItems(saleId);
+                saleDao.deleteSale(sale);
+            });
+            if (onSuccess != null) onSuccess.run();
         }).start();
     }
 }

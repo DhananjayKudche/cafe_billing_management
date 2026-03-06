@@ -27,5 +27,10 @@ public class DashboardActivity extends AppCompatActivity {
         findViewById(R.id.cardHistory).setOnClickListener(v -> {
             startActivity(new Intent(this, SaleHistoryActivity.class));
         });
+
+        // Navigation to Reports
+        findViewById(R.id.cardReports).setOnClickListener(v -> {
+            startActivity(new Intent(this, ReportActivity.class));
+        });
     }
 }

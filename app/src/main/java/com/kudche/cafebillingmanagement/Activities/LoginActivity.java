@@ -1,26 +1,82 @@
 package com.kudche.cafebillingmanagement.Activities;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.kudche.cafebillingmanagement.MainActivity;
 import com.kudche.cafebillingmanagement.R;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private TextInputEditText etUserId, etPassword;
+    private Button btnLogin;
+
+    // Hardcoded credentials
+    private static final String OWNER_ID = "owner123";
+    private static final String OWNER_PW = "owner@cafe";
+    
+    private static final String WORKER_ID = "worker123";
+    private static final String WORKER_PW = "worker@cafe";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        // Check if already logged in
+        SharedPreferences prefs = getSharedPreferences("CafePrefs", MODE_PRIVATE);
+        if (prefs.contains("userRole")) {
+            startMainActivity();
+            return;
+        }
+
+        etUserId = findViewById(R.id.etUserId);
+        etPassword = findViewById(R.id.etPassword);
+        btnLogin = findViewById(R.id.btnLogin);
+
+        btnLogin.setOnClickListener(v -> attemptLogin());
+    }
+
+    private void attemptLogin() {
+        String userId = etUserId.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
+
+        if (userId.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String role = null;
+
+        if (userId.equals(OWNER_ID) && password.equals(OWNER_PW)) {
+            role = "OWNER";
+        } else if (userId.equals(WORKER_ID) && password.equals(WORKER_PW)) {
+            role = "WORKER";
+        }
+
+        if (role != null) {
+            // Save role in SharedPreferences
+            SharedPreferences.Editor editor = getSharedPreferences("CafePrefs", MODE_PRIVATE).edit();
+            editor.putString("userRole", role);
+            editor.putString("userId", userId);
+            editor.apply();
+
+            Toast.makeText(this, "Login Successful as " + role, Toast.LENGTH_SHORT).show();
+            startMainActivity();
+        } else {
+            Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void startMainActivity() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 }
