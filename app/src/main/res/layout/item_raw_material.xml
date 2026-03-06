@@ -34,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Edit"
-        android:drawableLeft="@drawable/ic_edit"
+        android:drawableLeft="@drawable/ic_sales_history"
         android:drawablePadding="6dp"
         android:layout_marginEnd="8dp"/>
 

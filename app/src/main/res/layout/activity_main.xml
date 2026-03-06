@@ -11,12 +11,12 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cafe Management"
+        android:text="Aaradhya Cafe"
         android:textSize="26sp"
-        android:textStyle="bold"
         android:textColor="@color/black"
         android:layout_marginTop="32dp"
-        android:layout_marginBottom="32dp"/>
+        android:layout_marginBottom="32dp"
+        app:fontFamily="@font/lobster_regular" />
 
     <GridLayout
         android:layout_width="match_parent"
@@ -43,7 +43,7 @@
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@drawable/ic_add"
+                    android:src="@drawable/ic_billing"
                     app:tint="@color/black"/>
                 <TextView
                     android:layout_width="wrap_content"
@@ -72,7 +72,7 @@
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@drawable/ic_edit"
+                    android:src="@drawable/ic_sales_history"
                     app:tint="@color/black"/>
                 <TextView
                     android:layout_width="wrap_content"
@@ -101,7 +101,7 @@
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@drawable/ic_edit"
+                    android:src="@drawable/ic_products"
                     app:tint="@color/black"/>
                 <TextView
                     android:layout_width="wrap_content"
@@ -159,7 +159,7 @@
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@drawable/ic_edit"
+                    android:src="@drawable/ic_inventory"
                     app:tint="@color/black"/>
                 <TextView
                     android:layout_width="wrap_content"
