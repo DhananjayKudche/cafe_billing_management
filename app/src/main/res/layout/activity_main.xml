@@ -19,10 +19,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:text="Aaradhya Cafe"
+            android:text="Aarambh Cafe"
             android:textSize="26sp"
             android:textColor="@color/black"
-            app:fontFamily="@font/lobster_regular" />
+            app:fontFamily="@font/arizonia_regular" />
 
         <ImageView
             android:id="@+id/ivSettings"
