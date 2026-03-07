@@ -127,7 +127,7 @@
                     <ImageView
                         android:layout_width="56dp"
                         android:layout_height="56dp"
-                        android:src="@drawable/ic_sales_history"
+                        android:src="@drawable/ic_report"
                         app:tint="@color/cafe_primary"/>
                     <TextView
                         android:layout_width="wrap_content"
