@@ -6,217 +6,231 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#F5F5F5"
+    android:background="@color/background_cafe"
     android:gravity="center_horizontal">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp">
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="32dp">
 
         <TextView
+            android:id="@+id/tvAppName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:text="Aarambh Cafe"
-            android:textSize="26sp"
-            android:textColor="@color/black"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="@color/cafe_dark"
             app:fontFamily="@font/arizonia_regular" />
 
         <ImageView
             android:id="@+id/ivSettings"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:src="@drawable/ic_settings"
+            android:background="?attr/selectableItemBackgroundBorderless"
             android:clickable="true"
             android:focusable="true"
-            app:tint="@color/black" />
+            app:tint="@color/cafe_dark" />
     </RelativeLayout>
 
-    <GridLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:columnCount="2"
-        android:alignmentMode="alignMargins"
-        android:columnOrderPreserved="false">
+        android:layout_height="match_parent">
 
-        <!-- Billing -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardBilling"
-            android:layout_width="0dp"
+        <GridLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_margin="8dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp"
-                android:gravity="center">
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_billing"
-                    app:tint="@color/black"/>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Billing"
-                    android:textStyle="bold"
-                    android:layout_marginTop="8dp"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+            android:columnCount="2"
+            android:alignmentMode="alignMargins"
+            android:columnOrderPreserved="false">
 
-        <!-- Sale History -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardHistory"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_margin="8dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
-            <LinearLayout
-                android:layout_width="match_parent"
+            <!-- Billing -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardBilling"
+                style="@style/CafeCardStyle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp"
-                android:gravity="center">
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_sales_history"
-                    app:tint="@color/black"/>
-                <TextView
-                    android:layout_width="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="10dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Sale History"
-                    android:textStyle="bold"
-                    android:layout_marginTop="8dp"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+                    android:orientation="vertical"
+                    android:padding="24dp"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:src="@drawable/ic_billing"
+                        app:tint="@color/cafe_primary"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Billing"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/cafe_dark"
+                        android:layout_marginTop="12dp"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-        <!-- Reports -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardReports"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_margin="8dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
-            <LinearLayout
-                android:layout_width="match_parent"
+            <!-- Sale History -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardHistory"
+                style="@style/CafeCardStyle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp"
-                android:gravity="center">
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_sales_history"
-                    app:tint="@color/black"/>
-                <TextView
-                    android:layout_width="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="10dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Reports"
-                    android:textStyle="bold"
-                    android:layout_marginTop="8dp"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+                    android:orientation="vertical"
+                    android:padding="24dp"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:src="@drawable/ic_sales_history"
+                        app:tint="@color/cafe_primary"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sale History"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/cafe_dark"
+                        android:layout_marginTop="12dp"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-        <!-- Products -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardProduct"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_margin="8dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
-            <LinearLayout
-                android:layout_width="match_parent"
+            <!-- Reports -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardReports"
+                style="@style/CafeCardStyle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp"
-                android:gravity="center">
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_products"
-                    app:tint="@color/black"/>
-                <TextView
-                    android:layout_width="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="10dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Products"
-                    android:textStyle="bold"
-                    android:layout_marginTop="8dp"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+                    android:orientation="vertical"
+                    android:padding="24dp"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:src="@drawable/ic_sales_history"
+                        app:tint="@color/cafe_primary"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Reports"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/cafe_dark"
+                        android:layout_marginTop="12dp"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-        <!-- Day Close (Anti-Fraud) -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardDayClose"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_margin="8dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
-            <LinearLayout
-                android:layout_width="match_parent"
+            <!-- Products -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardProduct"
+                style="@style/CafeCardStyle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp"
-                android:gravity="center">
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_day_close"
-                    app:tint="@color/black"/>
-                <TextView
-                    android:layout_width="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="10dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Day Close"
-                    android:textStyle="bold"
-                    android:layout_marginTop="8dp"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+                    android:orientation="vertical"
+                    android:padding="24dp"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:src="@drawable/ic_products"
+                        app:tint="@color/cafe_primary"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Products"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/cafe_dark"
+                        android:layout_marginTop="12dp"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-        <!-- Inventory -->
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardRawMaterial"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_columnWeight="1"
-            android:layout_margin="8dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
-            <LinearLayout
-                android:layout_width="match_parent"
+            <!-- Day Close -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardDayClose"
+                style="@style/CafeCardStyle"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="20dp"
-                android:gravity="center">
-                <ImageView
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:src="@drawable/ic_inventory"
-                    app:tint="@color/black"/>
-                <TextView
-                    android:layout_width="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="10dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Inventory"
-                    android:textStyle="bold"
-                    android:layout_marginTop="8dp"/>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
+                    android:orientation="vertical"
+                    android:padding="24dp"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:src="@drawable/ic_day_close"
+                        app:tint="@color/cafe_primary"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Day Close"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/cafe_dark"
+                        android:layout_marginTop="12dp"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
-    </GridLayout>
+            <!-- Inventory -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardRawMaterial"
+                style="@style/CafeCardStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="10dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:src="@drawable/ic_inventory"
+                        app:tint="@color/cafe_primary"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Inventory"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/cafe_dark"
+                        android:layout_marginTop="12dp"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+        </GridLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

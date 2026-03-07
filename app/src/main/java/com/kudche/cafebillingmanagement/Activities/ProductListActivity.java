@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.kudche.cafebillingmanagement.Adapters.ProductAdapter;
 import com.kudche.cafebillingmanagement.Models.Product;
 import com.kudche.cafebillingmanagement.R;
@@ -27,7 +27,7 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
         setContentView(R.layout.activity_product_list);
 
         RecyclerView recyclerView = findViewById(R.id.productRecycler);
-        FloatingActionButton addFab = findViewById(R.id.addProductFab);
+        ExtendedFloatingActionButton addFab = findViewById(R.id.addProductFab);
 
         adapter = new ProductAdapter(this, this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

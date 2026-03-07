@@ -2,11 +2,25 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="colorPrimary">#6200EE</color>
-    <color name="colorPrimaryDark">#3700B3</color>
-    <color name="colorAccent">#03DAC5</color>
+
+    <!-- Cafe Theme Palette -->
+    <color name="cafe_dark">#3E2723</color> <!-- Espresso -->
+    <color name="cafe_medium">#5D4037</color> <!-- Coffee -->
+    <color name="cafe_primary">#795548</color> <!-- Brown -->
+    <color name="cafe_light">#D7CCC8</color> <!-- Latte -->
+    <color name="cafe_beige">#F5F5DC</color> <!-- Cream -->
+    <color name="cafe_accent">#FF8F00</color> <!-- Warm Amber/Orange -->
+
+    <color name="colorPrimary">@color/cafe_primary</color>
+    <color name="colorPrimaryDark">@color/cafe_dark</color>
+    <color name="colorAccent">@color/cafe_accent</color>
+
     <color name="gray_light">#F5F5F5</color>
     <color name="gray_dark">#757575</color>
     <color name="divider">#BDBDBD</color>
     <color name="card_bg">#FFFFFF</color>
+
+    <color name="background_cafe">@color/cafe_beige</color>
+    <color name="text_primary_cafe">@color/cafe_dark</color>
+    <color name="text_secondary_cafe">@color/cafe_medium</color>
 </resources>

@@ -9,7 +9,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.kudche.cafebillingmanagement.Adapters.RawMaterialAdapter;
 import com.kudche.cafebillingmanagement.R;
 
@@ -33,7 +33,7 @@ public class RawMaterialActivity extends AppCompatActivity {
 
     RawMaterialViewModel viewModel;
     RecyclerView recyclerView;
-    FloatingActionButton fab;
+    ExtendedFloatingActionButton fab;
     RawMaterialAdapter adapter;
 
     @Override

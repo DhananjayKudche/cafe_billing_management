@@ -1,184 +1,222 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:weightSum="10"
-    android:background="@color/white">
+    android:background="@color/background_cafe">
 
-    <!-- Product Selection Section (50%) -->
+    <!-- Header -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardElevation="4dp"
+        app:cardCornerRadius="0dp"
+        app:cardBackgroundColor="@color/cafe_dark">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:text="New Order"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center" />
+    </androidx.cardview.widget.CardView>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="5"
+        android:layout_weight="1"
         android:orientation="vertical"
         android:padding="8dp">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Select Products"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            android:layout_marginBottom="4dp"/>
-
-        <LinearLayout
+        <!-- Product Selection Section -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <Button
-                android:id="@+id/prevProductBtn"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:text="&lt;"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/black"
-                android:visibility="gone"
-                android:padding="0dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/productRecycler"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"/>
-
-            <Button
-                android:id="@+id/nextProductBtn"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:text="&gt;"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/black"
-                android:visibility="gone"
-                android:padding="0dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"/>
-        </LinearLayout>
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#CCCCCC"/>
-
-    <!-- Cart Section (30%) -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="3"
-        android:orientation="vertical"
-        android:padding="8dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Selected Items"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            android:layout_marginBottom="4dp"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <Button
-                android:id="@+id/prevCartBtn"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:text="&lt;"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/black"
-                android:visibility="gone"
-                android:padding="0dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"/>
+            android:layout_height="0dp"
+            android:layout_weight="1.2"
+            android:layout_margin="4dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp">
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:orientation="vertical"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp">
+                android:padding="8dp">
 
-                <include layout="@layout/layout_cart_header" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select Products"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/cafe_dark"
+                    android:layout_marginBottom="8dp"/>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/cartRecycler"
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
-            </LinearLayout>
+                    android:layout_height="match_parent">
 
-            <Button
-                android:id="@+id/nextCartBtn"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:text="&gt;"
-                android:textColor="@color/white"
-                android:backgroundTint="@color/black"
-                android:visibility="gone"
-                android:padding="0dp"
-                android:minWidth="0dp"
-                android:minHeight="0dp"/>
-        </LinearLayout>
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/prevProductBtn"
+                        style="@style/Widget.Material3.Button.IconButton.Filled"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentStart="true"
+                        android:backgroundTint="@color/cafe_medium"
+                        android:text="&lt;"
+                        android:visibility="gone" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/productRecycler"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_toEndOf="@id/prevProductBtn"
+                        android:layout_toStartOf="@id/nextProductBtn"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/nextProductBtn"
+                        style="@style/Widget.Material3.Button.IconButton.Filled"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentEnd="true"
+                        android:backgroundTint="@color/cafe_medium"
+                        android:text="&gt;"
+                        android:visibility="gone" />
+                </RelativeLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Cart Section -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.8"
+            android:layout_margin="4dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="8dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Selected Items"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="@color/cafe_dark"
+                    android:layout_marginBottom="8dp"/>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/prevCartBtn"
+                        style="@style/Widget.Material3.Button.IconButton.Filled"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentStart="true"
+                        android:backgroundTint="@color/cafe_medium"
+                        android:text="&lt;"
+                        android:visibility="gone" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_toEndOf="@id/prevCartBtn"
+                        android:layout_toStartOf="@id/nextCartBtn"
+                        android:orientation="vertical">
+
+                        <include layout="@layout/layout_cart_header" />
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/cartRecycler"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@color/gray_light"/>
+                    </LinearLayout>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/nextCartBtn"
+                        style="@style/Widget.Material3.Button.IconButton.Filled"
+                        android:layout_width="40dp"
+                        android:layout_height="match_parent"
+                        android:layout_alignParentEnd="true"
+                        android:backgroundTint="@color/cafe_medium"
+                        android:text="&gt;"
+                        android:visibility="gone" />
+                </RelativeLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
     </LinearLayout>
 
-    <!-- Bottom Action Bar (20%) -->
-    <LinearLayout
+    <!-- Bottom Action Bar -->
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2"
-        android:orientation="vertical"
-        android:padding="16dp"
-        android:gravity="center">
-
-        <TextView
-            android:id="@+id/totalAmount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Total: ₹0"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:layout_marginBottom="16dp"/>
+        android:layout_height="wrap_content"
+        app:cardElevation="16dp"
+        app:cardCornerRadius="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:background="@color/white">
 
-            <Button
-                android:id="@+id/cancelSaleBtn"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+            <TextView
+                android:id="@+id/totalAmount"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Cancel"
-                android:textColor="@color/white"
-                android:layout_marginEnd="8dp"
-                android:backgroundTint="#FF5722"
-                android:textSize="18sp"/>
+                android:text="Total: ₹0"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="@color/cafe_accent"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"/>
 
-            <Button
-                android:id="@+id/completeSale"
-                android:layout_width="0dp"
-                android:layout_weight="1"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Print"
-                android:textColor="@color/white"
-                android:backgroundTint="#4CAF50"
-                android:textSize="18sp"/>
+                android:orientation="horizontal"
+                android:gravity="center">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/cancelSaleBtn"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="60dp"
+                    android:text="Cancel"
+                    android:textColor="@color/cafe_dark"
+                    android:layout_marginEnd="8dp"
+                    android:textSize="18sp"
+                    app:cornerRadius="12dp"/>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/completeSale"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="60dp"
+                    android:text="Print &amp; Save"
+                    android:backgroundTint="@color/cafe_primary"
+                    android:textColor="@color/white"
+                    android:textSize="18sp"
+                    app:cornerRadius="12dp"
+                    app:icon="@drawable/ic_billing"
+                    app:iconGravity="textStart"
+                    app:iconPadding="8dp"/>
+            </LinearLayout>
         </LinearLayout>
-    </LinearLayout>
+    </androidx.cardview.widget.CardView>
 
 </LinearLayout>

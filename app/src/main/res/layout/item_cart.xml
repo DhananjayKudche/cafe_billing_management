@@ -4,56 +4,56 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp"
+    android:padding="12dp"
     android:gravity="center_vertical"
-    android:background="@drawable/item_divider">
+    android:background="@color/white">
 
     <TextView
         android:id="@+id/cartName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="2.5"
+        android:layout_weight="3"
         android:text="Item Name"
-        android:textColor="@color/black"
-        android:textSize="14sp" />
+        android:textColor="@color/cafe_dark"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="3"
+        android:layout_weight="2.5"
         android:gravity="center"
         android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/btnMinus"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="@drawable/bg_quantity_selector"
             android:padding="4dp"
             android:scaleType="fitCenter"
             android:src="@drawable/ic_remove"
-            app:tint="@color/black" />
+            app:tint="@color/cafe_medium" />
 
         <TextView
             android:id="@+id/cartQty"
-            android:layout_width="wrap_content"
+            android:layout_width="32dp"
             android:layout_height="wrap_content"
-            android:padding="4dp"
+            android:gravity="center"
             android:text="1"
-            android:textColor="@color/black"
+            android:textColor="@color/cafe_dark"
             android:textSize="14sp"
             android:textStyle="bold" />
 
         <ImageButton
             android:id="@+id/btnPlus"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/ic_add"
-            android:background="?attr/selectableItemBackgroundBorderless"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="@drawable/bg_quantity_selector"
             android:padding="4dp"
             android:scaleType="fitCenter"
-            app:tint="@color/black"
-            xmlns:app="http://schemas.android.com/apk/res-auto" />
+            android:src="@drawable/ic_add"
+            app:tint="@color/cafe_primary" />
     </LinearLayout>
 
     <TextView
@@ -63,8 +63,8 @@
         android:layout_weight="2"
         android:gravity="center"
         android:text="₹10"
-        android:textColor="@color/black"
-        android:textSize="14sp" />
+        android:textColor="@color/cafe_medium"
+        android:textSize="13sp" />
 
     <TextView
         android:id="@+id/cartAmount"
@@ -73,7 +73,7 @@
         android:layout_weight="2.5"
         android:gravity="end"
         android:text="₹10"
-        android:textColor="@color/black"
+        android:textColor="@color/cafe_accent"
         android:textSize="14sp"
         android:textStyle="bold" />
 

@@ -2,8 +2,24 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.CafeBillingManagement" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/cafe_primary</item>
+        <item name="colorPrimaryVariant">@color/cafe_dark</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/cafe_accent</item>
+        <item name="colorSecondaryVariant">@color/cafe_accent</item>
+        <item name="colorOnSecondary">@color/black</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/cafe_dark</item>
+
+        <item name="android:windowBackground">@color/background_cafe</item>
     </style>
 
     <style name="Theme.CafeBillingManagement" parent="Base.Theme.CafeBillingManagement" />
+
+    <style name="CafeCardStyle" parent="Widget.Material3.CardView.Elevated">
+        <item name="cardBackgroundColor">@color/white</item>
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">6dp</item>
+    </style>
 </resources>

@@ -3,46 +3,50 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp"
-    android:background="#DDDDDD">
-
-    <TextView
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="2.5"
-        android:text="Item"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:textSize="14sp" />
+    android:padding="12dp"
+    android:background="@color/cafe_medium">
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="3"
-        android:gravity="center"
-        android:text="Qty"
+        android:text="ITEM"
         android:textStyle="bold"
-        android:textColor="@color/black"
-        android:textSize="14sp" />
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:letterSpacing="0.1" />
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2.5"
+        android:gravity="center"
+        android:text="QTY"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:letterSpacing="0.1" />
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="2"
         android:gravity="center"
-        android:text="Price"
+        android:text="PRICE"
         android:textStyle="bold"
-        android:textColor="@color/black"
-        android:textSize="14sp" />
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:letterSpacing="0.1" />
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="2.5"
         android:gravity="end"
-        android:text="Amount"
+        android:text="AMOUNT"
         android:textStyle="bold"
-        android:textColor="@color/black"
-        android:textSize="14sp" />
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:letterSpacing="0.1" />
 
 </LinearLayout>
