@@ -35,7 +35,7 @@ import java.util.concurrent.Executors;
                 DayClose.class,
                 DayCloseItem.class
         },
-        version = 14
+        version = 15
 )
 public abstract class AppDatabase extends RoomDatabase {
 

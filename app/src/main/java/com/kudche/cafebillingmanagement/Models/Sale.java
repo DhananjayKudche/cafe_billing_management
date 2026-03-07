@@ -28,4 +28,7 @@ public class Sale {
 
     // Flag to indicate if any item in this sale was sold without sufficient stock recorded
     public boolean isEmergencySale = false;
+
+    // Flag to indicate if this is a parcel order (payment pending delivery)
+    public boolean isParcel = false;
 }

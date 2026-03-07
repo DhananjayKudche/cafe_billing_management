@@ -107,16 +107,23 @@ public class SaleHistoryActivity extends AppCompatActivity {
             Sale sale = sales.get(position);
             holder.invoice.setText(sale.invoiceNumber != null ? sale.invoiceNumber : "INV-" + sale.id);
             holder.date.setText(dateFormat.format(new Date(sale.createdAt)));
-            holder.payment.setText(sale.paymentType);
-            holder.total.setText("₹" + (int)sale.totalAmount);
+            
+            if (sale.isParcel) {
+                holder.payment.setText("PARCEL");
+                holder.payment.setTextColor(0xFF2196F3); // Blue
+                holder.total.setTextColor(0xFF2196F3);
+            } else {
+                holder.payment.setText("DINE-IN");
+                holder.payment.setTextColor(0xFF4CAF50); // Green
+                holder.total.setTextColor(0xFF4CAF50);
+            }
 
             if (sale.isEmergencySale) {
-                holder.total.setTextColor(0xFFFF5722);
-                holder.payment.setText(sale.paymentType + " (STOCK BYPASS)");
-            } else {
-                holder.total.setTextColor(0xFF4CAF50);
-                holder.payment.setText(sale.paymentType);
+                holder.payment.setText(holder.payment.getText() + " (STOCK BYPASS)");
+                holder.total.setTextColor(0xFFFF5722); // Orange override
             }
+            
+            holder.total.setText("₹" + (int)sale.totalAmount);
 
             holder.expandIcon.setOnClickListener(v -> toggleDetails(holder, sale));
             holder.itemView.setOnClickListener(v -> toggleDetails(holder, sale));

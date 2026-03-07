@@ -1,12 +1,17 @@
 package com.kudche.cafebillingmanagement.Activities;
 
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
@@ -40,21 +45,26 @@ public class BillingActivity extends AppCompatActivity
     private List<Product> allProducts = new ArrayList<>();
 
     private int productPage = 0;
-    private final int PRODUCT_PAGE_SIZE = 6;
-
-    private int cartPage = 0;
-    private final int CART_PAGE_SIZE = 4;
+    private final int PORTRAIT_PAGE_SIZE = 6;
+    private final int LANDSCAPE_PAGE_SIZE = 10;
 
     private SaleRepository saleRepository;
     private CartAdapter cartAdapter;
     private BillingProductAdapter productAdapter;
 
-    private TextView totalAmount;
+    private TextView totalAmount, billingTitle;
     private ProductViewModel productViewModel;
     private AppDatabase db;
 
-    private Button prevProductBtn, nextProductBtn, prevCartBtn, nextCartBtn;
+    private Button prevProductBtn, nextProductBtn;
+    private Button continueBtn, cancelSelectionBtn, cancelCheckoutBtn;
+    private CheckBox cbParcel;
     private ImageButton backBtn;
+    private LinearLayout layoutProductSelection, layoutCheckout;
+    private RecyclerView productRecycler;
+
+    private boolean isCheckoutPage = false;
+    private String userRole;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,22 +74,51 @@ public class BillingActivity extends AppCompatActivity
         db = AppDatabase.getInstance(this);
         saleRepository = new SaleRepository(this);
 
-        RecyclerView productRecycler = findViewById(R.id.productRecycler);
+        SharedPreferences prefs = getSharedPreferences("CafePrefs", MODE_PRIVATE);
+        userRole = prefs.getString("userRole", "WORKER");
+
+        // Views
+        billingTitle = findViewById(R.id.billingTitle);
+        layoutProductSelection = findViewById(R.id.layoutProductSelection);
+        layoutCheckout = findViewById(R.id.layoutCheckout);
+        
+        productRecycler = findViewById(R.id.productRecycler);
         RecyclerView cartRecycler = findViewById(R.id.cartRecycler);
         totalAmount = findViewById(R.id.totalAmount);
 
         Button completeSaleBtn = findViewById(R.id.completeSale);
-        Button cancelSaleBtn = findViewById(R.id.cancelSaleBtn);
         prevProductBtn = findViewById(R.id.prevProductBtn);
         nextProductBtn = findViewById(R.id.nextProductBtn);
-        prevCartBtn = findViewById(R.id.prevCartBtn);
-        nextCartBtn = findViewById(R.id.nextCartBtn);
         backBtn = findViewById(R.id.backBtn);
+        
+        continueBtn = findViewById(R.id.continueBtn);
+        cancelSelectionBtn = findViewById(R.id.cancelSelectionBtn);
+        cancelCheckoutBtn = findViewById(R.id.cancelCheckoutBtn);
+        cbParcel = findViewById(R.id.cbParcel);
 
-        backBtn.setOnClickListener(v -> onBackPressed());
+        // Visibility Logic for Back Button
+        if ("WORKER".equals(userRole)) {
+            backBtn.setVisibility(View.GONE);
+            cancelSelectionBtn.setText("Logout");
+            cancelSelectionBtn.setOnClickListener(v -> showLogoutDialog());
+        } else {
+            backBtn.setVisibility(View.VISIBLE);
+            backBtn.setOnClickListener(v -> handleBackAction());
+            cancelSelectionBtn.setOnClickListener(v -> finish());
+        }
+
+        cancelCheckoutBtn.setOnClickListener(v -> showProductSelection());
+        
+        continueBtn.setOnClickListener(v -> {
+            if (cartItems.isEmpty()) {
+                Toast.makeText(this, "Please select at least one item", Toast.LENGTH_SHORT).show();
+            } else {
+                showCheckout();
+            }
+        });
 
         productAdapter = new BillingProductAdapter(this);
-        productRecycler.setLayoutManager(new GridLayoutManager(this, 3));
+        updateGridLayout();
         productRecycler.setAdapter(productAdapter);
 
         cartAdapter = new CartAdapter(this);
@@ -93,19 +132,67 @@ public class BillingActivity extends AppCompatActivity
         });
 
         prevProductBtn.setOnClickListener(v -> { if (productPage > 0) { productPage--; updateProductList(); } });
-        nextProductBtn.setOnClickListener(v -> { if ((productPage + 1) * PRODUCT_PAGE_SIZE < allProducts.size()) { productPage++; updateProductList(); } });
-        prevCartBtn.setOnClickListener(v -> { if (cartPage > 0) { cartPage--; updateCart(); } });
-        nextCartBtn.setOnClickListener(v -> { if ((cartPage + 1) * CART_PAGE_SIZE < cartItems.size()) { cartPage++; updateCart(); } });
-
-        cancelSaleBtn.setOnClickListener(v -> {
-            cartItems.clear();
-            cartPage = 0;
-            updateCart();
-            updateProductQuantities();
-            Toast.makeText(this, "Sale Cancelled", Toast.LENGTH_SHORT).show();
-        });
+        nextProductBtn.setOnClickListener(v -> { if ((productPage + 1) * getPageSize() < allProducts.size()) { productPage++; updateProductList(); } });
 
         completeSaleBtn.setOnClickListener(v -> checkStockAndProceed());
+        
+        // Handle Back Press using OnBackPressedDispatcher
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                handleBackAction();
+            }
+        });
+
+        showProductSelection();
+    }
+
+    private void updateGridLayout() {
+        int spanCount = (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) ? 5 : 3;
+        productRecycler.setLayoutManager(new GridLayoutManager(this, spanCount));
+    }
+
+    private int getPageSize() {
+        return (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) ? LANDSCAPE_PAGE_SIZE : PORTRAIT_PAGE_SIZE;
+    }
+
+    private void handleBackAction() {
+        if (isCheckoutPage) {
+            showProductSelection();
+        } else {
+            if ("WORKER".equals(userRole)) {
+                // Do nothing for worker on main screen
+            } else {
+                finish();
+            }
+        }
+    }
+
+    private void showLogoutDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setPositiveButton("Logout", (d, w) -> {
+                    getSharedPreferences("CafePrefs", MODE_PRIVATE).edit().clear().apply();
+                    finish();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void showProductSelection() {
+        isCheckoutPage = false;
+        billingTitle.setText("Select Products");
+        layoutProductSelection.setVisibility(View.VISIBLE);
+        layoutCheckout.setVisibility(View.GONE);
+    }
+
+    private void showCheckout() {
+        isCheckoutPage = true;
+        billingTitle.setText("Review Order");
+        layoutProductSelection.setVisibility(View.GONE);
+        layoutCheckout.setVisibility(View.VISIBLE);
+        updateCart();
     }
 
     private void checkStockAndProceed() {
@@ -151,7 +238,9 @@ public class BillingActivity extends AppCompatActivity
             saleItems.add(item);
         }
 
-        saleRepository.createSale(saleItems, isEmergency, new SaleRepository.SaleCallback() {
+        boolean isParcel = cbParcel.isChecked();
+
+        saleRepository.createSale(saleItems, isEmergency, isParcel, new SaleRepository.SaleCallback() {
             @Override
             public void onSuccess(Sale sale, List<SaleItem> items) {
                 runOnUiThread(() -> {
@@ -161,9 +250,10 @@ public class BillingActivity extends AppCompatActivity
                     PrinterUtils.printReceipt(BillingActivity.this, sale, items);
                     
                     cartItems.clear();
-                    cartPage = 0;
+                    cbParcel.setChecked(false);
                     updateCart();
                     updateProductQuantities();
+                    showProductSelection(); 
                 });
             }
 
@@ -175,12 +265,13 @@ public class BillingActivity extends AppCompatActivity
     }
 
     private void updateProductList() {
-        int start = productPage * PRODUCT_PAGE_SIZE;
-        int end = Math.min(start + PRODUCT_PAGE_SIZE, allProducts.size());
+        int pageSize = getPageSize();
+        int start = productPage * pageSize;
+        int end = Math.min(start + pageSize, allProducts.size());
         if (start < allProducts.size()) productAdapter.setProducts(allProducts.subList(start, end));
         else productAdapter.setProducts(new ArrayList<>());
-        prevProductBtn.setVisibility(allProducts.size() > PRODUCT_PAGE_SIZE ? View.VISIBLE : View.GONE);
-        nextProductBtn.setVisibility(allProducts.size() > PRODUCT_PAGE_SIZE ? View.VISIBLE : View.GONE);
+        prevProductBtn.setVisibility(allProducts.size() > pageSize ? View.VISIBLE : View.GONE);
+        nextProductBtn.setVisibility(allProducts.size() > pageSize ? View.VISIBLE : View.GONE);
         updateProductQuantities();
     }
 
@@ -197,33 +288,26 @@ public class BillingActivity extends AppCompatActivity
         for (CartItem item : cartItems) {
             if (item.product.id == product.id) {
                 item.quantity += addQty;
-                updateCart(); updateProductQuantities();
+                updateProductQuantities();
                 return;
             }
         }
         CartItem item = new CartItem(); item.product = product; item.quantity = addQty; cartItems.add(item);
-        cartPage = (cartItems.size() - 1) / CART_PAGE_SIZE;
-        updateCart(); updateProductQuantities();
+        updateProductQuantities();
     }
 
     private void updateCartQuantity(Product product, int newQty) {
-        for (CartItem item : cartItems) { if (item.product.id == product.id) { item.quantity = newQty; updateCart(); updateProductQuantities(); return; } }
+        for (CartItem item : cartItems) { if (item.product.id == product.id) { item.quantity = newQty; updateProductQuantities(); return; } }
         addToCart(product, newQty);
     }
 
     private void removeFromCart(Product product) {
         for (int i = 0; i < cartItems.size(); i++) { if (cartItems.get(i).product.id == product.id) { cartItems.remove(i); break; } }
-        if (cartPage * CART_PAGE_SIZE >= cartItems.size() && cartPage > 0) cartPage--;
-        updateCart(); updateProductQuantities();
+        updateProductQuantities();
     }
 
     private void updateCart(){
-        int start = cartPage * CART_PAGE_SIZE;
-        int end = Math.min(start + CART_PAGE_SIZE, cartItems.size());
-        if (start < cartItems.size()) cartAdapter.setCartItems(cartItems.subList(start, end));
-        else cartAdapter.setCartItems(new ArrayList<>());
-        prevCartBtn.setVisibility(cartItems.size() >= CART_PAGE_SIZE ? View.VISIBLE : View.GONE);
-        nextCartBtn.setVisibility(cartItems.size() >= CART_PAGE_SIZE ? View.VISIBLE : View.GONE);
+        cartAdapter.setCartItems(cartItems);
         double total = 0; for(CartItem item : cartItems) total += item.getTotalPrice();
         totalAmount.setText("Total: ₹" + (int)total);
     }
@@ -231,7 +315,7 @@ public class BillingActivity extends AppCompatActivity
     @Override public void onIncrease(CartItem item) { item.quantity++; updateCart(); updateProductQuantities(); }
     @Override public void onDecrease(CartItem item) {
         item.quantity--;
-        if(item.quantity <= 0) { cartItems.remove(item); if (cartPage * CART_PAGE_SIZE >= cartItems.size() && cartPage > 0) cartPage--; }
+        if(item.quantity <= 0) { cartItems.remove(item); }
         updateCart(); updateProductQuantities();
     }
 }

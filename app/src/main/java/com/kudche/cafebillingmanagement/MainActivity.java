@@ -34,6 +34,13 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("CafePrefs", MODE_PRIVATE);
         String role = prefs.getString("userRole", "WORKER");
 
+        // Redirect Worker to Billing immediately
+        if ("WORKER".equals(role)) {
+            startActivity(new Intent(this, BillingActivity.class));
+            finish();
+            return;
+        }
+
         billingCard = findViewById(R.id.cardBilling);
         historyCard = findViewById(R.id.cardHistory);
         productCard = findViewById(R.id.cardProduct);
@@ -42,16 +49,17 @@ public class MainActivity extends AppCompatActivity {
         reportsCard = findViewById(R.id.cardReports);
         ivSettings = findViewById(R.id.ivSettings);
         
-        // Role-based visibility
-        if ("WORKER".equals(role)) {
-            if (reportsCard != null) reportsCard.setVisibility(View.GONE);
-            if (productCard != null) productCard.setVisibility(View.GONE);
-            if (inventoryCard != null) inventoryCard.setVisibility(View.GONE);
-            if (ivSettings != null) ivSettings.setVisibility(View.GONE);
+        // Owner logic: Billing should be hidden or disabled
+        if ("OWNER".equals(role)) {
+            if (billingCard != null) {
+                billingCard.setVisibility(View.GONE);
+            }
         }
 
-        billingCard.setOnClickListener(v ->
-                startActivity(new Intent(this, BillingActivity.class)));
+        if (billingCard != null) {
+            billingCard.setOnClickListener(v ->
+                    startActivity(new Intent(this, BillingActivity.class)));
+        }
 
         historyCard.setOnClickListener(v ->
                 startActivity(new Intent(this, SaleHistoryActivity.class)));
@@ -80,24 +88,31 @@ public class MainActivity extends AppCompatActivity {
         }
         
         // Logout functionality
-        findViewById(R.id.main_layout).setOnLongClickListener(v -> {
-            new androidx.appcompat.app.AlertDialog.Builder(this)
-                    .setTitle("Logout")
-                    .setMessage("Do you want to logout?")
-                    .setPositiveButton("Logout", (d, w) -> {
-                        prefs.edit().clear().apply();
-                        startActivity(new Intent(this, LoginActivity.class));
-                        finish();
-                    })
-                    .setNegativeButton("Cancel", null)
-                    .show();
-            return true;
-        });
+        View mainLayout = findViewById(R.id.main_layout);
+        if (mainLayout != null) {
+            mainLayout.setOnLongClickListener(v -> {
+                showLogoutDialog(prefs);
+                return true;
+            });
+        }
 
         // Request Printer Permissions on Start
         if (!PermissionHelper.hasPrintPermissions(this)) {
             PermissionHelper.requestPrintPermissions(this);
         }
+    }
+
+    private void showLogoutDialog(SharedPreferences prefs) {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Logout")
+                .setMessage("Do you want to logout?")
+                .setPositiveButton("Logout", (d, w) -> {
+                    prefs.edit().clear().apply();
+                    startActivity(new Intent(this, LoginActivity.class));
+                    finish();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     @Override

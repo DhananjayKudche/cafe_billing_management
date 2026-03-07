@@ -31,13 +31,14 @@ public class SaleRepository {
         saleDao = db.saleDao();
     }
 
-    public void createSale(List<SaleItem> items, boolean isEmergency, SaleCallback callback) {
+    public void createSale(List<SaleItem> items, boolean isEmergency, boolean isParcel, SaleCallback callback) {
         new Thread(() -> {
             try {
                 db.runInTransaction(() -> {
                     double total = 0;
                     long timestamp = System.currentTimeMillis();
-                    String invoiceNo = "INV-" + new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date());
+                    String prefix = isParcel ? "PRL-" : "INV-";
+                    String invoiceNo = prefix + new SimpleDateFormat("yyyyMMddHHmmss", Locale.getDefault()).format(new Date());
 
                     for (SaleItem item : items) {
                         Product product = productDao.getByIdSync(item.productId);
@@ -56,11 +57,12 @@ public class SaleRepository {
                     sale.subTotal = total;
                     sale.taxAmount = 0;
                     sale.discountAmount = 0;
-                    sale.paymentType = "CASH";
+                    sale.paymentType = isParcel ? "PENDING" : "CASH";
                     sale.createdAt = timestamp;
-                    sale.createdBy = "admin";
+                    sale.createdBy = "user";
                     sale.isSynced = false;
                     sale.isEmergencySale = isEmergency;
+                    sale.isParcel = isParcel;
 
                     long saleId = saleDao.insertSale(sale);
                     sale.id = (int) saleId;
