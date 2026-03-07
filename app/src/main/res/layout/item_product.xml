@@ -17,8 +17,8 @@
         <!-- Standardized Image Size -->
         <ImageView
             android:id="@+id/productImage"
-            android:layout_width="80dp"
-            android:layout_height="60dp"
+            android:layout_width="120dp"
+            android:layout_height="100dp"
             android:scaleType="centerCrop"
             android:src="@android:drawable/ic_menu_gallery"
             android:background="#DDDDDD" />

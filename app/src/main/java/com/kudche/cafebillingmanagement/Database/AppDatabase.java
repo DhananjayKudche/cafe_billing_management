@@ -68,9 +68,9 @@ public abstract class AppDatabase extends RoomDatabase {
             super.onCreate(db);
             Executors.newSingleThreadExecutor().execute(() -> {
                 // Initial data insertion with default image resource names
-                db.execSQL("INSERT INTO products (id,name,price,currentStock,lowStockThreshold,hasRecipe,isActive,imagePath) VALUES (1,'Chai',10,0,5,1,1,'ic_tea')");
-                db.execSQL("INSERT INTO products (id,name,price,currentStock,lowStockThreshold,hasRecipe,isActive,imagePath) VALUES (2,'Coffee',20,0,5,1,1,'ic_coffee')");
-                db.execSQL("INSERT INTO products (id,name,price,currentStock,lowStockThreshold,hasRecipe,isActive,imagePath) VALUES (3,'Sandwich',40,50,5,0,1,NULL)");
+                db.execSQL("INSERT INTO products (id,name,price,currentStock,lowStockThreshold,hasRecipe,isActive,imagePath) VALUES (1,'Chai',10,0,5,1,1,'chai_animated')");
+                db.execSQL("INSERT INTO products (id,name,price,currentStock,lowStockThreshold,hasRecipe,isActive,imagePath) VALUES (2,'Coffee',20,0,5,1,1,'coffee')");
+                db.execSQL("INSERT INTO products (id,name,price,currentStock,lowStockThreshold,hasRecipe,isActive,imagePath) VALUES (3,'Sandwich',40,50,5,0,1,'sandwich')");
 
                 db.execSQL("INSERT INTO raw_materials (id,name,unit,currentStock) VALUES (1,'Milk','ML',5000)");
                 db.execSQL("INSERT INTO raw_materials (id,name,unit,currentStock) VALUES (2,'Tea Powder','GRAM',500)");

@@ -66,15 +66,18 @@ public class BillingProductAdapter extends RecyclerView.Adapter<BillingProductAd
         holder.tvQuantity.setText(String.valueOf(quantity));
 
         if (product.imagePath != null && !product.imagePath.isEmpty()) {
-            if (product.imagePath.startsWith("ic_")) {
-                int resId = context.getResources().getIdentifier(product.imagePath, "drawable", context.getPackageName());
-                if (resId != 0) {
-                    holder.productImage.setImageResource(resId);
+            // First check if it's a drawable resource (like chai_animated, coffee, sandwich)
+            int resId = context.getResources().getIdentifier(product.imagePath, "drawable", context.getPackageName());
+            if (resId != 0) {
+                holder.productImage.setImageResource(resId);
+            } else {
+                // Otherwise treat it as a file path
+                File file = new File(product.imagePath);
+                if (file.exists()) {
+                    holder.productImage.setImageURI(Uri.fromFile(file));
                 } else {
                     holder.productImage.setImageResource(android.R.drawable.ic_menu_gallery);
                 }
-            } else {
-                holder.productImage.setImageURI(Uri.fromFile(new File(product.imagePath)));
             }
         } else {
             holder.productImage.setImageResource(android.R.drawable.ic_menu_gallery);

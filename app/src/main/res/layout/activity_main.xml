@@ -12,12 +12,12 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Aaradhya Cafe"
+        android:text="Aarambh Cafe"
         android:textSize="26sp"
         android:textColor="@color/black"
         android:layout_marginTop="32dp"
         android:layout_marginBottom="32dp"
-        app:fontFamily="@font/lobster_regular" />
+        app:fontFamily="@font/arizonia_regular" />
 
     <GridLayout
         android:layout_width="match_parent"
@@ -102,7 +102,7 @@
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@drawable/ic_sales_history"
+                    android:src="@drawable/ic_report"
                     app:tint="@color/black"/>
                 <TextView
                     android:layout_width="wrap_content"
