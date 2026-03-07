@@ -3,6 +3,7 @@ package com.kudche.cafebillingmanagement.Activities;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -41,6 +42,13 @@ public class SaleHistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sale_history);
 
+        // Set up toolbar back button
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setTitle("Sale History");
+        }
+
         saleRepository = new SaleRepository(this);
         RecyclerView recyclerView = findViewById(R.id.saleHistoryRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -57,6 +65,15 @@ public class SaleHistoryActivity extends AppCompatActivity {
                 adapter.setSales(sales);
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private static class SaleHistoryAdapter extends RecyclerView.Adapter<SaleHistoryAdapter.ViewHolder> {

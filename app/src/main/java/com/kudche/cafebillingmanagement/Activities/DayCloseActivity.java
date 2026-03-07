@@ -3,6 +3,7 @@ package com.kudche.cafebillingmanagement.Activities;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -34,6 +36,13 @@ public class DayCloseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_day_close);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
         db = AppDatabase.getInstance(this);
         RecyclerView recyclerView = findViewById(R.id.reconcileRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -44,6 +53,15 @@ public class DayCloseActivity extends AppCompatActivity {
         findViewById(R.id.submitDayCloseBtn).setOnClickListener(v -> submitDayClose());
 
         loadMaterials();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void loadMaterials() {

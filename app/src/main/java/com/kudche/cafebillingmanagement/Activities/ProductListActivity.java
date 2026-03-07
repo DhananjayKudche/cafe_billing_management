@@ -2,10 +2,13 @@ package com.kudche.cafebillingmanagement.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +29,13 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_list);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
         RecyclerView recyclerView = findViewById(R.id.productRecycler);
         ExtendedFloatingActionButton addFab = findViewById(R.id.addProductFab);
 
@@ -44,6 +54,15 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
             Intent intent = new Intent(this, AddProductActivity.class);
             startActivity(intent);
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

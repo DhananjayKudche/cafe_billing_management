@@ -3,6 +3,7 @@ package com.kudche.cafebillingmanagement.Activities;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,7 @@ public class BillingActivity extends AppCompatActivity
     private AppDatabase db;
 
     private Button prevProductBtn, nextProductBtn, prevCartBtn, nextCartBtn;
+    private ImageButton backBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +74,9 @@ public class BillingActivity extends AppCompatActivity
         nextProductBtn = findViewById(R.id.nextProductBtn);
         prevCartBtn = findViewById(R.id.prevCartBtn);
         nextCartBtn = findViewById(R.id.nextCartBtn);
+        backBtn = findViewById(R.id.backBtn);
+
+        backBtn.setOnClickListener(v -> onBackPressed());
 
         productAdapter = new BillingProductAdapter(this);
         productRecycler.setLayoutManager(new GridLayoutManager(this, 3));

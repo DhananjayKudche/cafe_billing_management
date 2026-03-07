@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -18,8 +19,10 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.kudche.cafebillingmanagement.Models.Product;
@@ -72,6 +75,13 @@ public class AddProductActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_product);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
         viewModel = new ViewModelProvider(this).get(ProductViewModel.class);
         rawViewModel = new ViewModelProvider(this).get(RawMaterialViewModel.class);
 
@@ -85,6 +95,9 @@ public class AddProductActivity extends AppCompatActivity {
         productId = getIntent().getIntExtra("productId",-1);
 
         if(productId != -1){
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle("Edit Product");
+            }
             loadProductData();
         }
 
@@ -98,6 +111,15 @@ public class AddProductActivity extends AppCompatActivity {
 
         findViewById(R.id.saveProductBtn).setOnClickListener(v -> saveProduct());
         findViewById(R.id.cancelBtn).setOnClickListener(v -> finish());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void openImagePicker() {
