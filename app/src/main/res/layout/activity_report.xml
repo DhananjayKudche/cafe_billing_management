@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_light"
+    android:background="#F5F5F5"
     tools:context=".Activities.ReportActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -111,7 +111,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:padding="16dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Total Orders" android:textColor="@color/gray_dark" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Total Orders" android:textColor="#757575" />
                         <TextView android:id="@+id/tvTotalOrders" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="18sp" android:textStyle="bold" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -128,7 +128,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:padding="16dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Items Sold" android:textColor="@color/gray_dark" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Items Sold" android:textColor="#757575" />
                         <TextView android:id="@+id/tvTotalItemsSold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textSize="18sp" android:textStyle="bold" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -145,7 +145,7 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:padding="16dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Total Sales" android:textColor="@color/gray_dark" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Total Sales" android:textColor="#757575" />
                         <TextView android:id="@+id/tvTotalSales" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="₹0" android:textSize="18sp" android:textStyle="bold" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -162,11 +162,40 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:padding="16dp">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Avg Order Value" android:textColor="@color/gray_dark" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Avg Order Value" android:textColor="#757575" />
                         <TextView android:id="@+id/tvAvgOrderValue" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="₹0" android:textSize="18sp" android:textStyle="bold" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
             </GridLayout>
+
+            <!-- Backup Status Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardBackupStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="8dp"
+                app:strokeColor="#E0E0E0"
+                app:strokeWidth="1dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Backup Status"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/tvBackupStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✓ Saved to Google Drive"
+                        android:textColor="#4CAF50"
+                        android:layout_marginTop="4dp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- 3. Product Wise Sales Report -->
             <TextView
