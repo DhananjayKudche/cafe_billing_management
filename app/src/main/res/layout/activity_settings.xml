@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_cafe"
+    android:fitsSystemWindows="true"
     tools:context=".Activities.SettingsActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -127,15 +128,16 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnBackupNow"
-                        style="@style/Widget.Material3.Button.TonalButton"
                         android:layout_width="match_parent"
                         android:layout_height="56dp"
                         android:text="Sync Data Now"
                         android:layout_marginTop="24dp"
                         app:cornerRadius="12dp"
-                        app:backgroundTint="@color/cafe_light"
-                        android:textColor="@color/cafe_dark"
-                        app:icon="@drawable/ic_settings"/>
+                        android:backgroundTint="@color/cafe_accent"
+                        android:textColor="@color/white"
+                        app:icon="@drawable/ic_settings"
+                        app:iconTint="@color/white"
+                        android:elevation="4dp" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

@@ -7,13 +7,14 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:background="@color/background_cafe"
-    android:gravity="center_horizontal">
+    android:gravity="center_horizontal"
+    android:fitsSystemWindows="true">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginBottom="32dp">
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp">
 
         <TextView
             android:id="@+id/tvAppName"
@@ -41,7 +42,8 @@
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:fillViewport="true">
 
         <GridLayout
             android:layout_width="match_parent"

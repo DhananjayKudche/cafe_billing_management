@@ -13,6 +13,8 @@
         <item name="android:statusBarColor">@color/cafe_dark</item>
 
         <item name="android:windowBackground">@color/background_cafe</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
 
     <style name="Theme.CafeBillingManagement" parent="Base.Theme.CafeBillingManagement" />

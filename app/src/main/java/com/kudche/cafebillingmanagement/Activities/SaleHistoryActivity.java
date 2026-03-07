@@ -79,7 +79,7 @@ public class SaleHistoryActivity extends AppCompatActivity {
     private static class SaleHistoryAdapter extends RecyclerView.Adapter<SaleHistoryAdapter.ViewHolder> {
 
         private List<Sale> sales = new ArrayList<>();
-        private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy, hh:mm a", Locale.getDefault());
         private final AppDatabase db;
         private final SaleRepository repository;
         private final String userRole;
@@ -111,16 +111,14 @@ public class SaleHistoryActivity extends AppCompatActivity {
             if (sale.isParcel) {
                 holder.payment.setText("PARCEL");
                 holder.payment.setTextColor(0xFF2196F3); // Blue
-                holder.total.setTextColor(0xFF2196F3);
             } else {
                 holder.payment.setText("DINE-IN");
                 holder.payment.setTextColor(0xFF4CAF50); // Green
-                holder.total.setTextColor(0xFF4CAF50);
             }
 
             if (sale.isEmergencySale) {
                 holder.payment.setText(holder.payment.getText() + " (STOCK BYPASS)");
-                holder.total.setTextColor(0xFFFF5722); // Orange override
+                holder.payment.setTextColor(0xFFFF5722);
             }
             
             holder.total.setText("₹" + (int)sale.totalAmount);
@@ -173,10 +171,14 @@ public class SaleHistoryActivity extends AppCompatActivity {
                                 .inflate(R.layout.item_sale_detail, holder.itemsList, false);
                         TextView name = itemView.findViewById(R.id.detailItemName);
                         TextView qty = itemView.findViewById(R.id.detailItemQty);
-                        TextView price = itemView.findViewById(R.id.detailItemPrice);
+                        TextView unitPrice = itemView.findViewById(R.id.detailItemUnitPrice);
+                        TextView totalPrice = itemView.findViewById(R.id.detailItemPrice);
+                        
                         name.setText(product != null ? product.name : "Unknown Item");
                         qty.setText(String.valueOf(item.quantity));
-                        price.setText("₹" + (int)(item.quantity * item.priceAtSale));
+                        unitPrice.setText("₹" + (int)item.priceAtSale);
+                        totalPrice.setText("₹" + (int)(item.quantity * item.priceAtSale));
+
                         holder.itemsList.addView(itemView);
                     });
                 }

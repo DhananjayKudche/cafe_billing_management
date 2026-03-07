@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_cafe"
+    android:fitsSystemWindows="true"
     tools:context=".Activities.ReportActivity">
 
     <com.google.android.material.appbar.AppBarLayout
@@ -101,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:text="Date Range: ..."
-                android:textColor="@color/cafe_medium"
+                android:textColor="@color/cafe_dark"
                 android:textStyle="bold" />
 
             <!-- 2. Sales Summary (Top Cards) -->
@@ -119,7 +120,8 @@
                     android:layout_columnWeight="1"
                     android:layout_margin="4dp"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp">
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@color/white">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -137,7 +139,8 @@
                     android:layout_columnWeight="1"
                     android:layout_margin="4dp"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp">
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@color/white">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -155,7 +158,8 @@
                     android:layout_columnWeight="1"
                     android:layout_margin="4dp"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp">
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@color/white">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -173,7 +177,8 @@
                     android:layout_columnWeight="1"
                     android:layout_margin="4dp"
                     app:cardCornerRadius="12dp"
-                    app:cardElevation="2dp">
+                    app:cardElevation="2dp"
+                    app:cardBackgroundColor="@color/white">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -186,50 +191,19 @@
                 </androidx.cardview.widget.CardView>
             </GridLayout>
 
-            <!-- Backup Status Card -->
-            <com.google.android.material.card.MaterialCardView
-                android:id="@+id/cardBackupStatus"
+            <!-- Manual Backup Button -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnManualBackup"
+                style="@style/Widget.Material3.Button.TonalButton"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
+                android:text="Manual Backup to Drive"
                 android:layout_marginBottom="24dp"
-                app:cardCornerRadius="12dp"
-                app:strokeColor="@color/cafe_light"
-                app:strokeWidth="1dp"
-                app:cardBackgroundColor="@color/white">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="16dp"
-                    android:gravity="center_vertical">
-                    <ImageView
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/ic_settings"
-                        app:tint="@color/cafe_medium"
-                        android:layout_marginEnd="12dp"/>
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Backup Status"
-                            android:textColor="@color/cafe_dark"
-                            android:textStyle="bold" />
-                        <TextView
-                            android:id="@+id/tvBackupStatus"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="✓ Saved to Google Drive"
-                            android:textColor="#4CAF50"
-                            android:textSize="12sp"
-                            android:layout_marginTop="2dp" />
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                app:cornerRadius="12dp"
+                app:backgroundTint="@color/cafe_accent"
+                android:textColor="@color/white"
+                app:icon="@drawable/ic_settings"
+                app:iconTint="@color/white" />
 
             <!-- 3. Product Wise Sales Report -->
             <TextView
@@ -246,6 +220,7 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/white"
                 android:layout_marginBottom="24dp">
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -276,6 +251,7 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/white"
                 android:layout_marginBottom="24dp">
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -305,6 +281,7 @@
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp"
+                app:cardBackgroundColor="@color/white"
                 android:layout_marginBottom="24dp">
                 <LinearLayout
                     android:layout_width="match_parent"

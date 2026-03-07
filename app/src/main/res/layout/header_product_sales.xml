@@ -3,37 +3,49 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="8dp"
-    android:background="@color/divider">
+    android:padding="12dp"
+    android:background="@color/cafe_medium">
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="2"
-        android:text="Product"
-        android:textStyle="bold" />
+        android:text="PRODUCT"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:letterSpacing="0.1" />
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="Qty"
+        android:text="QTY"
         android:textStyle="bold"
-        android:gravity="center" />
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:letterSpacing="0.1" />
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1.2"
-        android:text="Price"
+        android:text="PRICE"
         android:textStyle="bold"
-        android:gravity="end" />
+        android:gravity="end"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:letterSpacing="0.1" />
 
     <TextView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1.5"
-        android:text="Total"
+        android:text="TOTAL"
         android:textStyle="bold"
-        android:gravity="end" />
+        android:gravity="end"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        android:letterSpacing="0.1" />
 </LinearLayout>

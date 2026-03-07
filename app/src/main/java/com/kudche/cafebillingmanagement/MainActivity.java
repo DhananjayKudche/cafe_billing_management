@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
         reportsCard = findViewById(R.id.cardReports);
         ivSettings = findViewById(R.id.ivSettings);
         
-        // Owner logic: Billing should be hidden or disabled
+        // Owner logic: Billing should be removed from layout to avoid blank space
         if ("OWNER".equals(role)) {
             if (billingCard != null) {
                 billingCard.setVisibility(View.GONE);

@@ -159,7 +159,10 @@ public class SettingsActivity extends AppCompatActivity {
 
         new Thread(() -> {
             try {
-                runOnUiThread(() -> btnBackupNow.setEnabled(false));
+                runOnUiThread(() -> {
+                    btnBackupNow.setEnabled(false);
+                    btnBackupNow.setText("Syncing Data...");
+                });
                 
                 // 1. Generate PDF
                 File reportFile = PdfReportGenerator.generateDailyReport(this, System.currentTimeMillis());
@@ -180,6 +183,7 @@ public class SettingsActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     updateUI();
                     btnBackupNow.setEnabled(true);
+                    btnBackupNow.setText("Sync Data Now");
                     Toast.makeText(this, "Backup Successful!", Toast.LENGTH_SHORT).show();
                 });
 
@@ -187,6 +191,7 @@ public class SettingsActivity extends AppCompatActivity {
                 e.printStackTrace();
                 runOnUiThread(() -> {
                     btnBackupNow.setEnabled(true);
+                    btnBackupNow.setText("Sync Data Now");
                     Toast.makeText(this, "Backup Failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
             }
