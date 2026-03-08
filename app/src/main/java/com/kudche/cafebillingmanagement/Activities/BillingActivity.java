@@ -42,7 +42,7 @@ public class BillingActivity extends AppCompatActivity
         CartAdapter.CartActionListener {
 
     private List<CartItem> cartItems = new ArrayList<>();
-    private List<Product> allProducts = new ArrayList<>();
+    private List<Product> filteredProducts = new ArrayList<>();
 
     private int productPage = 0;
     private final int PORTRAIT_PAGE_SIZE = 6;
@@ -65,6 +65,7 @@ public class BillingActivity extends AppCompatActivity
 
     private boolean isCheckoutPage = false;
     private String userRole;
+    private String currentCategory = "Cafe Category";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,13 +127,27 @@ public class BillingActivity extends AppCompatActivity
         cartRecycler.setAdapter(cartAdapter);
 
         productViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
-        productViewModel.getProducts().observe(this, products -> {
-            allProducts = products;
-            updateProductList();
+        
+        // Category Buttons
+        Button btnCafe = findViewById(R.id.btnCafeCategory);
+        Button btnJuice = findViewById(R.id.btnJuiceCategory);
+
+        btnCafe.setOnClickListener(v -> {
+            currentCategory = "Cafe Category";
+            productPage = 0;
+            observeProducts();
         });
 
+        btnJuice.setOnClickListener(v -> {
+            currentCategory = "Juice Category";
+            productPage = 0;
+            observeProducts();
+        });
+
+        observeProducts();
+
         prevProductBtn.setOnClickListener(v -> { if (productPage > 0) { productPage--; updateProductList(); } });
-        nextProductBtn.setOnClickListener(v -> { if ((productPage + 1) * getPageSize() < allProducts.size()) { productPage++; updateProductList(); } });
+        nextProductBtn.setOnClickListener(v -> { if ((productPage + 1) * getPageSize() < filteredProducts.size()) { productPage++; updateProductList(); } });
 
         completeSaleBtn.setOnClickListener(v -> checkStockAndProceed());
         
@@ -145,6 +160,13 @@ public class BillingActivity extends AppCompatActivity
         });
 
         showProductSelection();
+    }
+
+    private void observeProducts() {
+        productViewModel.getProductsByCategory(currentCategory).observe(this, products -> {
+            filteredProducts = products;
+            updateProductList();
+        });
     }
 
     private void updateGridLayout() {
@@ -267,11 +289,11 @@ public class BillingActivity extends AppCompatActivity
     private void updateProductList() {
         int pageSize = getPageSize();
         int start = productPage * pageSize;
-        int end = Math.min(start + pageSize, allProducts.size());
-        if (start < allProducts.size()) productAdapter.setProducts(allProducts.subList(start, end));
+        int end = Math.min(start + pageSize, filteredProducts.size());
+        if (start < filteredProducts.size()) productAdapter.setProducts(filteredProducts.subList(start, end));
         else productAdapter.setProducts(new ArrayList<>());
-        prevProductBtn.setVisibility(allProducts.size() > pageSize ? View.VISIBLE : View.GONE);
-        nextProductBtn.setVisibility(allProducts.size() > pageSize ? View.VISIBLE : View.GONE);
+        prevProductBtn.setVisibility(filteredProducts.size() > pageSize ? View.VISIBLE : View.GONE);
+        nextProductBtn.setVisibility(filteredProducts.size() > pageSize ? View.VISIBLE : View.GONE);
         updateProductQuantities();
     }
 

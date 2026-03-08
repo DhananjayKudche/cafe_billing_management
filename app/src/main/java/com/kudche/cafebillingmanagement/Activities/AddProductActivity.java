@@ -51,12 +51,14 @@ public class AddProductActivity extends AppCompatActivity {
     Button addMaterialBtn;
     ImageView productImage;
     Button selectImageBtn;
+    Spinner categorySpinner;
 
     List<ProductRawMaterial> selectedMaterials = new ArrayList<>();
     List<RawMaterial> rawMaterials = new ArrayList<>();
 
     int productId = -1;
     String currentImagePath = null;
+    String[] categories = {"Cafe Category", "Juice Category"};
 
     private final ActivityResultLauncher<Intent> imagePickerLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -91,6 +93,10 @@ public class AddProductActivity extends AppCompatActivity {
         addMaterialBtn = findViewById(R.id.addMaterialBtn);
         productImage = findViewById(R.id.productImage);
         selectImageBtn = findViewById(R.id.selectImageBtn);
+        categorySpinner = findViewById(R.id.categorySpinner);
+
+        ArrayAdapter<String> catAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, categories);
+        categorySpinner.setAdapter(catAdapter);
 
         productId = getIntent().getIntExtra("productId",-1);
 
@@ -161,6 +167,17 @@ public class AddProductActivity extends AppCompatActivity {
                 nameInput.setText(product.name);
                 priceInput.setText(String.valueOf(product.price));
                 currentImagePath = product.imagePath;
+                
+                // Set Category
+                if (product.category != null) {
+                    for (int i = 0; i < categories.length; i++) {
+                        if (categories[i].equals(product.category)) {
+                            categorySpinner.setSelection(i);
+                            break;
+                        }
+                    }
+                }
+
                 if (currentImagePath != null) {
                     if (currentImagePath.startsWith("ic_")) {
                         int resId = getResources().getIdentifier(currentImagePath, "drawable", getPackageName());
@@ -270,6 +287,7 @@ public class AddProductActivity extends AppCompatActivity {
     private void saveProduct(){
         String name = nameInput.getText().toString();
         String priceStr = priceInput.getText().toString();
+        String category = categorySpinner.getSelectedItem().toString();
 
         if (name.isEmpty() || priceStr.isEmpty()) {
             Toast.makeText(this, "Please enter name and price", Toast.LENGTH_SHORT).show();
@@ -279,7 +297,8 @@ public class AddProductActivity extends AppCompatActivity {
         Product product = new Product();
         product.name = name;
         product.price = Double.parseDouble(priceStr);
-        product.currentStock = 50;
+        product.category = category;
+        product.currentStock = 0; // Starting with 0 stock
         product.lowStockThreshold = 5;
         product.hasRecipe = !selectedMaterials.isEmpty();
         product.imagePath = currentImagePath;

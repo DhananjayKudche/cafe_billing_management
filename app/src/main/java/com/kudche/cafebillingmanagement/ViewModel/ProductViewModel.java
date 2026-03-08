@@ -1,6 +1,8 @@
 package com.kudche.cafebillingmanagement.ViewModel;
 
 import android.app.Application;
+import android.os.Handler;
+import android.os.Looper;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -13,24 +15,18 @@ import com.kudche.cafebillingmanagement.Models.ProductRawMaterial;
 import com.kudche.cafebillingmanagement.Models.RawMaterial;
 import com.kudche.cafebillingmanagement.Repository.ProductRepository;
 
-import android.os.Handler;
-import android.os.Looper;
-import java.util.function.Consumer;
-import java.util.concurrent.Executors;
-
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 public class ProductViewModel extends AndroidViewModel {
 
     private final ProductRepository repository;
-
     private final RawMaterialDao rawMaterialDao;
 
     public ProductViewModel(@NonNull Application application) {
         super(application);
-
         AppDatabase db = AppDatabase.getInstance(application);
-
         rawMaterialDao = db.rawMaterialDao();
         repository = new ProductRepository(application, rawMaterialDao);
     }
@@ -39,13 +35,15 @@ public class ProductViewModel extends AndroidViewModel {
         return repository.getProducts();
     }
 
-    public void insertProduct(Product product,
-                              List<ProductRawMaterial> materials){
+    public LiveData<List<Product>> getProductsByCategory(String category) {
+        return repository.getProductsByCategory(category);
+    }
+
+    public void insertProduct(Product product, List<ProductRawMaterial> materials){
         repository.insertProduct(product, materials);
     }
 
-    public void updateProduct(Product product,
-                              List<ProductRawMaterial> materials){
+    public void updateProduct(Product product, List<ProductRawMaterial> materials){
         repository.updateProduct(product, materials);
     }
 
@@ -53,41 +51,20 @@ public class ProductViewModel extends AndroidViewModel {
         repository.delete(product);
     }
 
-    // 🔹 ADD THIS
     public Product getProductById(int productId){
         return repository.getProductById(productId);
     }
 
-    // 🔹 ADD THIS
     public List<ProductRawMaterial> getMaterialsByProduct(int productId){
         return repository.getMaterialsByProduct(productId);
     }
 
-//    public ProductRawMaterial getRawMaterialById(int rawMaterialId){
-//        return repository.getRawMaterialById(rawMaterialId);
-//    }
-//
-//    public Product getProductById(int id){
-//        return repository.getProductById(id);
-//    }
-//
-//    public List<ProductRawMaterial> getMaterialsByProduct(int productId){
-//        return repository.getMaterialsByProduct(productId);
-//    }
-
-//    public RawMaterial getRawMaterialById(int id){
-//        return repository.getRawMaterialById(id);
-//    }
     public void getRawMaterialById(int id, Consumer<RawMaterial> callback){
-
         Executors.newSingleThreadExecutor().execute(() -> {
-
             RawMaterial raw = repository.getRawMaterialById(id);
-
             new Handler(Looper.getMainLooper()).post(() ->
                     callback.accept(raw)
             );
-
         });
     }
 }

@@ -1,9 +1,6 @@
 package com.kudche.cafebillingmanagement.Repository;
 
 import android.app.Application;
-import android.content.Context;
-import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 
 import com.kudche.cafebillingmanagement.Dao.ProductDao;
@@ -22,33 +19,28 @@ public class ProductRepository {
 
     private final ProductDao productDao;
     private final ProductRawMaterialDao mappingDao;
-
     private final RawMaterialDao rawMaterialDao;
-    private final LiveData<List<Product>> products;
     private final ExecutorService executor;
 
     public ProductRepository(Application app, RawMaterialDao rawMaterialDao){
         this.rawMaterialDao = rawMaterialDao;
-
         AppDatabase db = AppDatabase.getInstance(app);
-
         productDao = db.productDao();
         mappingDao = db.productRawMaterialDao();
-        products = productDao.getAll();
         executor = Executors.newSingleThreadExecutor();
     }
 
     public LiveData<List<Product>> getProducts(){
-        return products;
+        return productDao.getAll();
     }
 
-    public void insertProduct(Product product,
-                              List<ProductRawMaterial> materials){
+    public LiveData<List<Product>> getProductsByCategory(String category) {
+        return productDao.getProductsByCategory(category);
+    }
 
+    public void insertProduct(Product product, List<ProductRawMaterial> materials){
         executor.execute(() -> {
-
             long productId = productDao.insert(product);
-
             for(ProductRawMaterial m : materials){
                 m.productId = (int) productId;
                 mappingDao.insert(m);
@@ -56,19 +48,12 @@ public class ProductRepository {
         });
     }
 
-    public void updateProduct(Product product,
-                              List<ProductRawMaterial> materials){
-
+    public void updateProduct(Product product, List<ProductRawMaterial> materials){
         executor.execute(() -> {
-
             productDao.update(product);
-
             mappingDao.deleteByProduct(product.id);
-
             for(ProductRawMaterial m : materials){
-
                 m.productId = product.id;
-
                 mappingDao.insert(m);
             }
         });
@@ -84,18 +69,6 @@ public class ProductRepository {
         });
     }
 
-//    public Product getProductById(int id){
-//        return productDao.getProductById(id);
-//    }
-//
-//    public List<ProductRawMaterial> getMaterialsByProduct(int productId){
-//        return mappingDao.getByProduct(productId);
-//    }
-//
-//    public ProductRawMaterial getRawMaterialById(int id){
-//        return mappingDao.getById(id);
-//    }
-
     public Product getProductById(int id){
         return productDao.getById(id);
     }
@@ -107,6 +80,4 @@ public class ProductRepository {
     public RawMaterial getRawMaterialById(int id){
         return rawMaterialDao.getById(id);
     }
-
-
 }

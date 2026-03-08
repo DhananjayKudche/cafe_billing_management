@@ -35,7 +35,7 @@ import java.util.concurrent.Executors;
                 DayClose.class,
                 DayCloseItem.class
         },
-        version = 15
+        version = 16
 )
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -67,23 +67,33 @@ public abstract class AppDatabase extends RoomDatabase {
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
             Executors.newSingleThreadExecutor().execute(() -> {
-                // Initial data insertion with default image resource names
-                db.execSQL("INSERT INTO products (id,name,price,currentStock,lowStockThreshold,hasRecipe,isActive,imagePath) VALUES (1,'Chai',10,0,5,1,1,'chai_animated')");
-                db.execSQL("INSERT INTO products (id,name,price,currentStock,lowStockThreshold,hasRecipe,isActive,imagePath) VALUES (2,'Coffee',20,0,5,1,1,'coffee')");
-                db.execSQL("INSERT INTO products (id,name,price,currentStock,lowStockThreshold,hasRecipe,isActive,imagePath) VALUES (3,'Sandwich',40,50,5,0,1,'sandwich')");
+                // Initial data insertion for Cafe Category
+                db.execSQL("INSERT INTO products (name,price,currentStock,lowStockThreshold,hasRecipe,isActive,category) VALUES ('Tea',10,0,5,0,1,'Cafe Category')");
+                db.execSQL("INSERT INTO products (name,price,currentStock,lowStockThreshold,hasRecipe,isActive,category) VALUES ('Special Tea',15,0,5,0,1,'Cafe Category')");
+                db.execSQL("INSERT INTO products (name,price,currentStock,lowStockThreshold,hasRecipe,isActive,category) VALUES ('Lemon Tea',15,0,5,0,1,'Cafe Category')");
+                db.execSQL("INSERT INTO products (name,price,currentStock,lowStockThreshold,hasRecipe,isActive,category) VALUES ('Black Tea',10,0,5,0,1,'Cafe Category')");
+                db.execSQL("INSERT INTO products (name,price,currentStock,lowStockThreshold,hasRecipe,isActive,category) VALUES ('Coffee',20,0,5,0,1,'Cafe Category')");
+                db.execSQL("INSERT INTO products (name,price,currentStock,lowStockThreshold,hasRecipe,isActive,category) VALUES ('Black Coffee',15,0,5,0,1,'Cafe Category')");
+                db.execSQL("INSERT INTO products (name,price,currentStock,lowStockThreshold,hasRecipe,isActive,category) VALUES ('Bournvita',25,0,5,0,1,'Cafe Category')");
+                db.execSQL("INSERT INTO products (name,price,currentStock,lowStockThreshold,hasRecipe,isActive,category) VALUES ('Milk',20,0,5,0,1,'Cafe Category')");
 
+                // Initial data insertion for Juice Category
+                db.execSQL("INSERT INTO products (name,price,currentStock,lowStockThreshold,hasRecipe,isActive,category) VALUES ('Apple Juice',50,0,5,0,1,'Juice Category')");
+                db.execSQL("INSERT INTO products (name,price,currentStock,lowStockThreshold,hasRecipe,isActive,category) VALUES ('Pineapple Juice',50,0,5,0,1,'Juice Category')");
+                db.execSQL("INSERT INTO products (name,price,currentStock,lowStockThreshold,hasRecipe,isActive,category) VALUES ('Mosambhi Juice',40,0,5,0,1,'Juice Category')");
+                db.execSQL("INSERT INTO products (name,price,currentStock,lowStockThreshold,hasRecipe,isActive,category) VALUES ('Dalimb Juice',50,0,5,0,1,'Juice Category')");
+                db.execSQL("INSERT INTO products (name,price,currentStock,lowStockThreshold,hasRecipe,isActive,category) VALUES ('Mango Juice',50,0,5,0,1,'Juice Category')");
+                db.execSQL("INSERT INTO products (name,price,currentStock,lowStockThreshold,hasRecipe,isActive,category) VALUES ('Chickkoo Juice',40,0,5,0,1,'Juice Category')");
+                db.execSQL("INSERT INTO products (name,price,currentStock,lowStockThreshold,hasRecipe,isActive,category) VALUES ('Sitafal Juice',60,0,5,0,1,'Juice Category')");
+                db.execSQL("INSERT INTO products (name,price,currentStock,lowStockThreshold,hasRecipe,isActive,category) VALUES ('Strawberrry Juice',60,0,5,0,1,'Juice Category')");
+                db.execSQL("INSERT INTO products (name,price,currentStock,lowStockThreshold,hasRecipe,isActive,category) VALUES ('Watermellon Juice',40,0,5,0,1,'Juice Category')");
+                db.execSQL("INSERT INTO products (name,price,currentStock,lowStockThreshold,hasRecipe,isActive,category) VALUES ('Mixed Juice',50,0,5,0,1,'Juice Category')");
+
+                // Raw materials
                 db.execSQL("INSERT INTO raw_materials (id,name,unit,currentStock) VALUES (1,'Milk','ML',5000)");
                 db.execSQL("INSERT INTO raw_materials (id,name,unit,currentStock) VALUES (2,'Tea Powder','GRAM',500)");
                 db.execSQL("INSERT INTO raw_materials (id,name,unit,currentStock) VALUES (3,'Coffee Powder','GRAM',500)");
                 db.execSQL("INSERT INTO raw_materials (id,name,unit,currentStock) VALUES (4,'Sugar','GRAM',2000)");
-
-                db.execSQL("INSERT INTO product_raw_material (productId,rawMaterialId,quantityRequired) VALUES (1,1,200)");
-                db.execSQL("INSERT INTO product_raw_material (productId,rawMaterialId,quantityRequired) VALUES (1,2,5)");
-                db.execSQL("INSERT INTO product_raw_material (productId,rawMaterialId,quantityRequired) VALUES (1,4,10)");
-
-                db.execSQL("INSERT INTO product_raw_material (productId,rawMaterialId,quantityRequired) VALUES (2,1,200)");
-                db.execSQL("INSERT INTO product_raw_material (productId,rawMaterialId,quantityRequired) VALUES (2,3,5)");
-                db.execSQL("INSERT INTO product_raw_material (productId,rawMaterialId,quantityRequired) VALUES (2,4,8)");
             });
         }
     };

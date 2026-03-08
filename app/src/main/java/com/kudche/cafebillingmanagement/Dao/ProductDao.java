@@ -32,6 +32,9 @@ public interface ProductDao {
     @Query("SELECT * FROM products WHERE isActive = 1")
     LiveData<List<Product>> getAllProducts();
 
+    @Query("SELECT * FROM products WHERE category = :category AND isActive = 1")
+    LiveData<List<Product>> getProductsByCategory(String category);
+
     @Query("SELECT * FROM products WHERE id = :id LIMIT 1")
     Product getProductById(int id);
 

@@ -23,6 +23,8 @@ public class Product {
 
     public String imagePath; // Stores the URI or path of the product image
 
+    public String category; // Category of the product (e.g., Cafe Category, Juice Category)
+
     @Override
     public String toString() {
         return name;
