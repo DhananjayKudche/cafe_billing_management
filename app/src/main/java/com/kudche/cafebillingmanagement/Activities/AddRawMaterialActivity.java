@@ -13,9 +13,14 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.kudche.cafebillingmanagement.Database.AppDatabase;
+import com.kudche.cafebillingmanagement.Models.BulkOrder;
 import com.kudche.cafebillingmanagement.Models.RawMaterial;
 import com.kudche.cafebillingmanagement.R;
+import com.kudche.cafebillingmanagement.Utils.UnitConverter;
 import com.kudche.cafebillingmanagement.ViewModel.RawMaterialViewModel;
+
+import java.util.List;
 
 public class AddRawMaterialActivity extends AppCompatActivity {
 
@@ -26,15 +31,15 @@ public class AddRawMaterialActivity extends AppCompatActivity {
     EditText stockInput;
 
     int materialId = -1;
-    RawMaterial existingMaterial;
-
     String[] units = {"GRAM","ML","LITRE","KG","QUANTITY"};
+    private AppDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_raw_material);
 
+        db = AppDatabase.getInstance(this);
         ImageButton backBtn = findViewById(R.id.backBtn);
         backBtn.setOnClickListener(v -> onBackPressed());
 
@@ -48,28 +53,23 @@ public class AddRawMaterialActivity extends AppCompatActivity {
         Button addBtn = findViewById(R.id.addRawBtn);
         Button cancelBtn = findViewById(R.id.cancelBtn);
 
-        // Spinner setup
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_dropdown_item,
-                units
-        );
-
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, units);
         unitSpinner.setAdapter(adapter);
 
-        // Check if edit mode
         materialId = getIntent().getIntExtra("materialId", -1);
 
         if(materialId != -1){
-            headerTitle.setText("Edit Raw Material");
+            headerTitle.setText("Edit Raw Material (Handover)");
             new Thread(() -> {
                 RawMaterial material = viewModel.getByIdSync(materialId);
                 runOnUiThread(() -> {
                     if(material != null){
                         nameInput.setText(material.name);
-                        stockInput.setText(String.valueOf(material.currentStock));
+                        // Convert base unit to selected display unit
+                        double displayStock = UnitConverter.convertFromBase(material.currentStock, material.unit);
+                        stockInput.setText(String.valueOf(displayStock));
                         for(int i = 0; i < units.length; i++){
-                            if(units[i].equals(material.unit)){
+                            if(units[i].equalsIgnoreCase(material.unit)){
                                 unitSpinner.setSelection(i);
                                 break;
                             }
@@ -89,24 +89,61 @@ public class AddRawMaterialActivity extends AppCompatActivity {
                 return;
             }
 
-            double stock = Double.parseDouble(stockStr);
+            double displayQty = Double.parseDouble(stockStr);
+            // Convert everything to base unit for database storage
+            double baseQty = UnitConverter.convertToBase(displayQty, unit);
 
-            RawMaterial material = new RawMaterial();
-            material.name = name;
-            material.unit = unit;
-            material.currentStock = stock;
-
-            if(materialId == -1){
-                viewModel.insert(material);
-                Toast.makeText(this,"Raw material added",Toast.LENGTH_SHORT).show();
-            }else{
-                material.id = materialId;
-                viewModel.update(material);
-                Toast.makeText(this,"Raw material updated",Toast.LENGTH_SHORT).show();
-            }
-            finish();
+            new Thread(() -> {
+                if(materialId != -1) {
+                    RawMaterial oldMaterial = viewModel.getByIdSync(materialId);
+                    double differenceInBase = baseQty - oldMaterial.currentStock;
+                    
+                    if (differenceInBase > 0) {
+                        // Deduct from Bulk Orders using base units
+                        deductFromBulk(materialId, differenceInBase);
+                    }
+                    
+                    oldMaterial.name = name;
+                    oldMaterial.unit = unit;
+                    oldMaterial.currentStock = baseQty;
+                    viewModel.update(oldMaterial);
+                } else {
+                    RawMaterial material = new RawMaterial();
+                    material.name = name;
+                    material.unit = unit;
+                    material.currentStock = baseQty;
+                    viewModel.insert(material);
+                }
+                
+                runOnUiThread(() -> {
+                    Toast.makeText(this,"Inventory updated",Toast.LENGTH_SHORT).show();
+                    finish();
+                });
+            }).start();
         });
 
         cancelBtn.setOnClickListener(v -> finish());
+    }
+
+    private void deductFromBulk(int rawId, double baseAmountToDeduct) {
+        List<BulkOrder> bulkOrders = db.bulkOrderDao().getActiveBulkOrdersByMaterial(rawId);
+        double remainingBaseToDeduct = baseAmountToDeduct;
+        
+        for (BulkOrder order : bulkOrders) {
+            if (remainingBaseToDeduct <= 0) break;
+            
+            double orderRemainingInBase = UnitConverter.convertToBase(order.remainingInBulk, order.unit);
+            
+            if (orderRemainingInBase >= remainingBaseToDeduct) {
+                orderRemainingInBase -= remainingBaseToDeduct;
+                order.remainingInBulk = UnitConverter.convertFromBase(orderRemainingInBase, order.unit);
+                db.bulkOrderDao().update(order);
+                remainingBaseToDeduct = 0;
+            } else {
+                remainingBaseToDeduct -= orderRemainingInBase;
+                order.remainingInBulk = 0;
+                db.bulkOrderDao().update(order);
+            }
+        }
     }
 }

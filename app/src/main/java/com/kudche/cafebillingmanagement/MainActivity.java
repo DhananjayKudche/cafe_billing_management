@@ -12,9 +12,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
 import com.kudche.cafebillingmanagement.Activities.BillingActivity;
+import com.kudche.cafebillingmanagement.Activities.BulkOrderActivity;
 import com.kudche.cafebillingmanagement.Activities.DayCloseActivity;
 import com.kudche.cafebillingmanagement.Activities.LoginActivity;
-import com.kudche.cafebillingmanagement.Activities.ProductListActivity;
+import com.kudche.cafebillingmanagement.Activities.ProductActivity;
 import com.kudche.cafebillingmanagement.Activities.RawMaterialActivity;
 import com.kudche.cafebillingmanagement.Activities.ReportActivity;
 import com.kudche.cafebillingmanagement.Activities.SaleHistoryActivity;
@@ -23,7 +24,7 @@ import com.kudche.cafebillingmanagement.Utils.PermissionHelper;
 
 public class MainActivity extends AppCompatActivity {
 
-    CardView billingCard, historyCard, productCard, inventoryCard, dayCloseCard, reportsCard;
+    CardView billingCard, bulkOrderCard, historyCard, productCard, inventoryCard, dayCloseCard, reportsCard;
     ImageView ivSettings;
 
     @Override
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         billingCard = findViewById(R.id.cardBilling);
+        bulkOrderCard = findViewById(R.id.cardBulkOrder);
         historyCard = findViewById(R.id.cardHistory);
         productCard = findViewById(R.id.cardProduct);
         inventoryCard = findViewById(R.id.cardRawMaterial);
@@ -49,16 +51,22 @@ public class MainActivity extends AppCompatActivity {
         reportsCard = findViewById(R.id.cardReports);
         ivSettings = findViewById(R.id.ivSettings);
         
-        // Owner logic: Billing should be removed from layout to avoid blank space
+        // Owner logic: Swap Billing with Bulk Orders
         if ("OWNER".equals(role)) {
-            if (billingCard != null) {
-                billingCard.setVisibility(View.GONE);
-            }
+            if (billingCard != null) billingCard.setVisibility(View.GONE);
+            if (bulkOrderCard != null) bulkOrderCard.setVisibility(View.VISIBLE);
+        } else {
+            if (bulkOrderCard != null) bulkOrderCard.setVisibility(View.GONE);
         }
 
         if (billingCard != null) {
             billingCard.setOnClickListener(v ->
                     startActivity(new Intent(this, BillingActivity.class)));
+        }
+        
+        if (bulkOrderCard != null) {
+            bulkOrderCard.setOnClickListener(v ->
+                    startActivity(new Intent(this, BulkOrderActivity.class)));
         }
 
         historyCard.setOnClickListener(v ->
@@ -66,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (productCard != null) {
             productCard.setOnClickListener(v ->
-                    startActivity(new Intent(this, ProductListActivity.class)));
+                    startActivity(new Intent(this, ProductActivity.class)));
         }
 
         if (inventoryCard != null) {

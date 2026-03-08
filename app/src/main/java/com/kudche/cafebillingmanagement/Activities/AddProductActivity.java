@@ -29,6 +29,7 @@ import com.kudche.cafebillingmanagement.Models.Product;
 import com.kudche.cafebillingmanagement.Models.ProductRawMaterial;
 import com.kudche.cafebillingmanagement.Models.RawMaterial;
 import com.kudche.cafebillingmanagement.R;
+import com.kudche.cafebillingmanagement.Utils.UnitConverter;
 import com.kudche.cafebillingmanagement.ViewModel.ProductViewModel;
 import com.kudche.cafebillingmanagement.ViewModel.RawMaterialViewModel;
 
@@ -168,7 +169,6 @@ public class AddProductActivity extends AppCompatActivity {
                 priceInput.setText(String.valueOf(product.price));
                 currentImagePath = product.imagePath;
                 
-                // Set Category
                 if (product.category != null) {
                     for (int i = 0; i < categories.length; i++) {
                         if (categories[i].equals(product.category)) {
@@ -210,50 +210,59 @@ public class AddProductActivity extends AppCompatActivity {
 
     private void showMaterialSelector(ProductRawMaterial existingMapping) {
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_material, null);
-        Spinner spinner = view.findViewById(R.id.rawMaterialSpinner);
+        Spinner materialSpinner = view.findViewById(R.id.rawMaterialSpinner);
+        Spinner unitSpinner = view.findViewById(R.id.unitSpinner); // Need unit selection in recipe too
         EditText qtyInput = view.findViewById(R.id.quantityInput);
-        TextView unitText = view.findViewById(R.id.unitText);
+
+        String[] recipeUnits = {"GRAM", "ML", "KG", "LITRE", "QUANTITY"};
+        ArrayAdapter<String> unitAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, recipeUnits);
+        unitSpinner.setAdapter(unitAdapter);
 
         ArrayAdapter<RawMaterial> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, rawMaterials);
-        spinner.setAdapter(adapter);
+        materialSpinner.setAdapter(adapter);
 
         if (existingMapping != null) {
+            // Internal mapping is in BASE units (ML/GRAM), but user might want to see it in KG/LITRE
+            // For now, let's keep recipe configuration in BASE units to avoid confusion, or convert.
+            // Requirement says: configure unit value (e.g. 50ml).
             qtyInput.setText(String.valueOf(existingMapping.quantityRequired));
+            // Default to base unit of the material
             for (int i = 0; i < rawMaterials.size(); i++) {
                 if (rawMaterials.get(i).id == existingMapping.rawMaterialId) {
-                    spinner.setSelection(i);
-                    unitText.setText(rawMaterials.get(i).unit);
+                    materialSpinner.setSelection(i);
+                    String base = UnitConverter.getBaseUnit(rawMaterials.get(i).unit);
+                    for(int j=0; j<recipeUnits.length; j++) {
+                        if(recipeUnits[j].equalsIgnoreCase(base)) {
+                            unitSpinner.setSelection(j);
+                            break;
+                        }
+                    }
                     break;
                 }
             }
         }
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                unitText.setText(rawMaterials.get(position).unit);
-            }
-            @Override public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
         new AlertDialog.Builder(this)
-                .setTitle(existingMapping == null ? "Add Raw Material" : "Edit Raw Material")
+                .setTitle(existingMapping == null ? "Add Ingredient" : "Edit Ingredient")
                 .setView(view)
                 .setPositiveButton(existingMapping == null ? "Add" : "Update", (d, w) -> {
-                    RawMaterial selected = (RawMaterial) spinner.getSelectedItem();
+                    RawMaterial selected = (RawMaterial) materialSpinner.getSelectedItem();
+                    String unit = unitSpinner.getSelectedItem().toString();
                     String qtyStr = qtyInput.getText().toString();
                     if(qtyStr.isEmpty()) return;
 
-                    double qty = Double.parseDouble(qtyStr);
+                    double userQty = Double.parseDouble(qtyStr);
+                    // CONVERT TO BASE UNIT (ML/GRAM) for internal storage
+                    double baseQty = UnitConverter.convertToBase(userQty, unit);
 
                     if (existingMapping == null) {
                         ProductRawMaterial mapping = new ProductRawMaterial();
                         mapping.rawMaterialId = selected.id;
-                        mapping.quantityRequired = qty;
+                        mapping.quantityRequired = baseQty;
                         selectedMaterials.add(mapping);
                     } else {
                         existingMapping.rawMaterialId = selected.id;
-                        existingMapping.quantityRequired = qty;
+                        existingMapping.quantityRequired = baseQty;
                     }
                     refreshMaterialList();
                 })
@@ -268,8 +277,10 @@ public class AddProductActivity extends AppCompatActivity {
         ImageView editIcon = view.findViewById(R.id.editMaterialIcon);
         ImageView deleteIcon = view.findViewById(R.id.deleteMaterialIcon);
 
-        String displayText = (raw != null) ? (raw.name + " - " + mapping.quantityRequired + " " + raw.unit)
-                                           : ("Unknown Material - " + mapping.quantityRequired);
+        // Display in base units for now (ML/GRAM)
+        String baseUnit = (raw != null) ? UnitConverter.getBaseUnit(raw.unit) : "";
+        String displayText = (raw != null) ? (raw.name + " - " + mapping.quantityRequired + " " + baseUnit)
+                                           : ("Unknown - " + mapping.quantityRequired);
         nameText.setText(displayText);
 
         deleteIcon.setOnClickListener(v -> {
@@ -298,7 +309,7 @@ public class AddProductActivity extends AppCompatActivity {
         product.name = name;
         product.price = Double.parseDouble(priceStr);
         product.category = category;
-        product.currentStock = 0; // Starting with 0 stock
+        product.currentStock = 0;
         product.lowStockThreshold = 5;
         product.hasRecipe = !selectedMaterials.isEmpty();
         product.imagePath = currentImagePath;

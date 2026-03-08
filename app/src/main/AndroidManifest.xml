@@ -87,6 +87,12 @@
         <activity
             android:name=".Activities.SettingsActivity"
             android:exported="false" />
+        <activity
+            android:name=".Activities.BulkOrderActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.AddBulkOrderActivity"
+            android:exported="false" />
 
     </application>
 

@@ -7,12 +7,14 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import com.kudche.cafebillingmanagement.Dao.BulkOrderDao;
 import com.kudche.cafebillingmanagement.Dao.DayCloseDao;
 import com.kudche.cafebillingmanagement.Dao.ProductDao;
 import com.kudche.cafebillingmanagement.Dao.ProductRawMaterialDao;
 import com.kudche.cafebillingmanagement.Dao.RawMaterialDao;
 import com.kudche.cafebillingmanagement.Dao.SaleDao;
 import com.kudche.cafebillingmanagement.Dao.StockDao;
+import com.kudche.cafebillingmanagement.Models.BulkOrder;
 import com.kudche.cafebillingmanagement.Models.DayClose;
 import com.kudche.cafebillingmanagement.Models.DayCloseItem;
 import com.kudche.cafebillingmanagement.Models.Product;
@@ -33,9 +35,10 @@ import java.util.concurrent.Executors;
                 RawMaterial.class,
                 ProductRawMaterial.class,
                 DayClose.class,
-                DayCloseItem.class
+                DayCloseItem.class,
+                BulkOrder.class
         },
-        version = 16
+        version = 17
 )
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -47,6 +50,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract RawMaterialDao rawMaterialDao();
     public abstract ProductRawMaterialDao productRawMaterialDao();
     public abstract DayCloseDao dayCloseDao();
+    public abstract BulkOrderDao bulkOrderDao();
 
     public static synchronized AppDatabase getInstance(Context context) {
         if (instance == null) {
@@ -90,10 +94,10 @@ public abstract class AppDatabase extends RoomDatabase {
                 db.execSQL("INSERT INTO products (name,price,currentStock,lowStockThreshold,hasRecipe,isActive,category) VALUES ('Mixed Juice',50,0,5,0,1,'Juice Category')");
 
                 // Raw materials
-                db.execSQL("INSERT INTO raw_materials (id,name,unit,currentStock) VALUES (1,'Milk','ML',5000)");
-                db.execSQL("INSERT INTO raw_materials (id,name,unit,currentStock) VALUES (2,'Tea Powder','GRAM',500)");
-                db.execSQL("INSERT INTO raw_materials (id,name,unit,currentStock) VALUES (3,'Coffee Powder','GRAM',500)");
-                db.execSQL("INSERT INTO raw_materials (id,name,unit,currentStock) VALUES (4,'Sugar','GRAM',2000)");
+                db.execSQL("INSERT INTO raw_materials (id,name,unit,currentStock) VALUES (1,'Milk','ML',0)");
+                db.execSQL("INSERT INTO raw_materials (id,name,unit,currentStock) VALUES (2,'Tea Powder','GRAM',0)");
+                db.execSQL("INSERT INTO raw_materials (id,name,unit,currentStock) VALUES (3,'Coffee Powder','GRAM',0)");
+                db.execSQL("INSERT INTO raw_materials (id,name,unit,currentStock) VALUES (4,'Sugar','GRAM',0)");
             });
         }
     };

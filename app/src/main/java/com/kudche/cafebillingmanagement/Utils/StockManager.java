@@ -23,8 +23,14 @@ public class StockManager {
 
             for (ProductRawMaterial map : mappings) {
                 RawMaterial material = db.rawMaterialDao().getByIdSync(map.rawMaterialId);
-                if (material == null || material.currentStock < (map.quantityRequired * quantitySold)) {
-                    return false;
+                if (material != null) {
+                    // Recipe requirement is always in base units (ML/GRAM)
+                    double requiredBase = map.quantityRequired * quantitySold;
+                    
+                    // Current stock is in base units as well
+                    if (material.currentStock < requiredBase) {
+                        return false;
+                    }
                 }
             }
             return true;
@@ -55,6 +61,7 @@ public class StockManager {
                 for (ProductRawMaterial map : mappings) {
                     RawMaterial material = db.rawMaterialDao().getByIdSync(map.rawMaterialId);
                     if (material != null) {
+                        // All internal calculations for RawMaterial stock are now in base units (ML/GRAM)
                         material.currentStock -= (map.quantityRequired * quantity * multiplier);
                         db.rawMaterialDao().update(material);
                     }

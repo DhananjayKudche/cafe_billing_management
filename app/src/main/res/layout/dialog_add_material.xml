@@ -5,29 +5,43 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Select Material"
+        android:textColor="@color/cafe_medium"
+        android:layout_marginBottom="4dp"/>
+
     <Spinner
         android:id="@+id/rawMaterialSpinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"/>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical">
 
-        <EditText
-            android:id="@+id/quantityInput"
-            android:hint="Quantity"
-            android:inputType="numberDecimal"
-            android:layout_weight="1"
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="0dp"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Quantity"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/quantityInput"
+                android:inputType="numberDecimal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:id="@+id/unitText"
-            android:layout_marginStart="8dp"
+        <Spinner
+            android:id="@+id/unitSpinner"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"/>
     </LinearLayout>
 
 </LinearLayout>

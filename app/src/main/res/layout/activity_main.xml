@@ -13,19 +13,45 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="24dp">
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp">
 
-        <TextView
-            android:id="@+id/tvAppName"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_centerHorizontal="true"
-            android:text="Aarambh Cafe"
-            android:textSize="32sp"
-            android:textStyle="bold"
-            android:textColor="@color/cafe_dark"
-            app:fontFamily="@font/arizonia_regular" />
+            android:gravity="center">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                app:cardCornerRadius="40dp"
+                app:cardElevation="4dp"
+                app:strokeWidth="2dp"
+                app:strokeColor="@color/cafe_primary">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_products"
+                    android:padding="12dp"
+                    app:tint="@color/cafe_primary"
+                    android:scaleType="centerInside"
+                    android:background="@color/white"/>
+            </com.google.android.material.card.MaterialCardView>
+
+            <TextView
+                android:id="@+id/tvAppName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Aarambh Cafe"
+                android:textSize="28sp"
+                android:textStyle="bold"
+                android:textColor="@color/cafe_dark"
+                android:layout_marginTop="8dp"
+                app:fontFamily="@font/arizonia_regular" />
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/ivSettings"
@@ -52,7 +78,37 @@
             android:alignmentMode="alignMargins"
             android:columnOrderPreserved="false">
 
-            <!-- Billing -->
+            <!-- Bulk Order (Owner Only) -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardBulkOrder"
+                style="@style/CafeCardStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_columnWeight="1"
+                android:layout_margin="10dp">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp"
+                    android:gravity="center">
+                    <ImageView
+                        android:layout_width="56dp"
+                        android:layout_height="56dp"
+                        android:src="@drawable/ic_billing"
+                        app:tint="@color/cafe_accent"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Bulk Orders"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/cafe_dark"
+                        android:layout_marginTop="12dp"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- Billing (Worker Only) -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardBilling"
                 style="@style/CafeCardStyle"
