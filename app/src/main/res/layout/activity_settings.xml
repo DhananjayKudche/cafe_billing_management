@@ -18,7 +18,8 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:title="Settings"
-            app:titleTextColor="@color/white" />
+            app:titleTextColor="@color/white"
+            app:navigationIcon="@drawable/ic_back" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -138,6 +139,17 @@
                         app:icon="@drawable/ic_settings"
                         app:iconTint="@color/white"
                         android:elevation="4dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnRestoreData"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:text="Restore Master Data"
+                        android:layout_marginTop="12dp"
+                        app:cornerRadius="12dp"
+                        android:textColor="@color/cafe_dark"
+                        app:icon="@drawable/ic_add" />
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.chip.ChipGroup;
 import com.kudche.cafebillingmanagement.Adapters.Sale.BillingProductAdapter;
 import com.kudche.cafebillingmanagement.Adapters.Sale.CartAdapter;
 import com.kudche.cafebillingmanagement.Database.AppDatabase;
@@ -128,18 +129,14 @@ public class BillingActivity extends AppCompatActivity
 
         productViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
         
-        // Category Buttons
-        Button btnCafe = findViewById(R.id.btnCafeCategory);
-        Button btnJuice = findViewById(R.id.btnJuiceCategory);
-
-        btnCafe.setOnClickListener(v -> {
-            currentCategory = "Cafe Category";
-            productPage = 0;
-            observeProducts();
-        });
-
-        btnJuice.setOnClickListener(v -> {
-            currentCategory = "Juice Category";
+        // Category Chips
+        ChipGroup categoryChipGroup = findViewById(R.id.categoryChipGroup);
+        categoryChipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            if (checkedIds.contains(R.id.chipCafe)) {
+                currentCategory = "Cafe Category";
+            } else if (checkedIds.contains(R.id.chipJuice)) {
+                currentCategory = "Juice Category";
+            }
             productPage = 0;
             observeProducts();
         });
@@ -163,6 +160,7 @@ public class BillingActivity extends AppCompatActivity
     }
 
     private void observeProducts() {
+        productViewModel.getProductsByCategory(currentCategory).removeObservers(this);
         productViewModel.getProductsByCategory(currentCategory).observe(this, products -> {
             filteredProducts = products;
             updateProductList();

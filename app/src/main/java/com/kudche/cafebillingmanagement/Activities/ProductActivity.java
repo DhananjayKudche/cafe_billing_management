@@ -2,7 +2,6 @@ package com.kudche.cafebillingmanagement.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.ImageButton;
 
 import androidx.appcompat.app.AlertDialog;
@@ -11,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.kudche.cafebillingmanagement.Adapters.ProductAdapter;
 import com.kudche.cafebillingmanagement.R;
@@ -53,17 +53,14 @@ public class ProductActivity extends AppCompatActivity {
 
         recycler.setAdapter(adapter);
 
-        // Category Buttons
-        Button btnCafe = findViewById(R.id.btnCafeCategory);
-        Button btnJuice = findViewById(R.id.btnJuiceCategory);
-
-        btnCafe.setOnClickListener(v -> {
-            currentCategory = "Cafe Category";
-            observeProducts();
-        });
-
-        btnJuice.setOnClickListener(v -> {
-            currentCategory = "Juice Category";
+        // Category Chips
+        ChipGroup categoryChipGroup = findViewById(R.id.categoryChipGroup);
+        categoryChipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            if (checkedIds.contains(R.id.chipCafe)) {
+                currentCategory = "Cafe Category";
+            } else if (checkedIds.contains(R.id.chipJuice)) {
+                currentCategory = "Juice Category";
+            }
             observeProducts();
         });
 
@@ -74,6 +71,8 @@ public class ProductActivity extends AppCompatActivity {
     }
 
     private void observeProducts() {
+        // Remove previous observers to avoid multiple calls
+        viewModel.getProductsByCategory(currentCategory).removeObservers(this);
         viewModel.getProductsByCategory(currentCategory).observe(this, products -> {
             adapter.setList(products);
         });

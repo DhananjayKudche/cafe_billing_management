@@ -51,32 +51,36 @@
         android:orientation="vertical"
         android:visibility="visible">
 
-        <!-- Category Filter Buttons -->
-        <LinearLayout
+        <!-- Category Filter Chips -->
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/categoryChipGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:padding="8dp"
-            android:gravity="center">
+            android:padding="12dp"
+            app:singleSelection="true"
+            app:selectionRequired="true"
+            app:chipSpacingHorizontal="8dp">
 
-            <Button
-                android:id="@+id/btnCafeCategory"
-                android:layout_width="0dp"
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipCafe"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="Cafe Category"
-                android:layout_marginEnd="4dp"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
+                app:chipBackgroundColor="@color/chip_background_selector"
+                android:textColor="@color/white"
+                android:checked="true" />
 
-            <Button
-                android:id="@+id/btnJuiceCategory"
-                android:layout_width="0dp"
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chipJuice"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="Juice Category"
-                android:layout_marginStart="4dp"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"/>
-        </LinearLayout>
+                app:chipBackgroundColor="@color/chip_background_selector"
+                android:textColor="@color/white" />
+
+        </com.google.android.material.chip.ChipGroup>
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"

@@ -10,6 +10,7 @@ import com.google.api.services.drive.DriveScopes;
 import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.FileList;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -61,13 +62,34 @@ public class GoogleDriveHelper {
     }
 
     public void uploadFile(java.io.File localFile, String mimeType, String folderId) throws IOException {
+        // First, check if file with same name exists in this folder to update it
+        String query = "name = '" + localFile.getName() + "' and '" + folderId + "' in parents and trashed = false";
+        FileList result = driveService.files().list().setQ(query).setFields("files(id)").execute();
+
         File fileMetadata = new File();
         fileMetadata.setName(localFile.getName());
-        fileMetadata.setParents(Collections.singletonList(folderId));
-
         FileContent mediaContent = new FileContent(mimeType, localFile);
-        driveService.files().create(fileMetadata, mediaContent)
-                .setFields("id")
-                .execute();
+
+        if (!result.getFiles().isEmpty()) {
+            // Update existing
+            String fileId = result.getFiles().get(0).getId();
+            driveService.files().update(fileId, null, mediaContent).execute();
+        } else {
+            // Create new
+            fileMetadata.setParents(Collections.singletonList(folderId));
+            driveService.files().create(fileMetadata, mediaContent).execute();
+        }
+    }
+
+    public String downloadFileContent(String fileName, String folderId) throws IOException {
+        String query = "name = '" + fileName + "' and '" + folderId + "' in parents and trashed = false";
+        FileList result = driveService.files().list().setQ(query).setFields("files(id)").execute();
+
+        if (result.getFiles().isEmpty()) return null;
+
+        String fileId = result.getFiles().get(0).getId();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        driveService.files().get(fileId).executeMediaAndDownloadTo(outputStream);
+        return outputStream.toString();
     }
 }

@@ -12,7 +12,9 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.work.Constraints;
 import androidx.work.NetworkType;
 import androidx.work.PeriodicWorkRequest;
@@ -24,11 +26,11 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.Scope;
 import com.google.api.services.drive.DriveScopes;
+import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.kudche.cafebillingmanagement.BackupManager.DriveBackupManager;
 import com.kudche.cafebillingmanagement.R;
 import com.kudche.cafebillingmanagement.Utils.AutoBackupWorker;
-import com.kudche.cafebillingmanagement.Utils.GoogleDriveHelper;
 import com.kudche.cafebillingmanagement.Utils.PdfReportGenerator;
-import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -39,7 +41,7 @@ import java.util.concurrent.TimeUnit;
 public class SettingsActivity extends AppCompatActivity {
 
     private TextView tvAccountName, tvLastBackup;
-    private Button btnConnectDrive, btnBackupNow;
+    private Button btnConnectDrive, btnBackupNow, btnRestoreData;
     private SwitchMaterial switchAutoBackup;
     private SharedPreferences prefs;
 
@@ -50,6 +52,8 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -62,6 +66,7 @@ public class SettingsActivity extends AppCompatActivity {
         tvLastBackup = findViewById(R.id.tvLastBackup);
         btnConnectDrive = findViewById(R.id.btnConnectDrive);
         btnBackupNow = findViewById(R.id.btnBackupNow);
+        btnRestoreData = findViewById(R.id.btnRestoreData);
         switchAutoBackup = findViewById(R.id.switchAutoBackup);
 
         updateUI();
@@ -96,6 +101,15 @@ public class SettingsActivity extends AppCompatActivity {
         });
 
         btnBackupNow.setOnClickListener(v -> performBackup());
+        
+        btnRestoreData.setOnClickListener(v -> {
+            new AlertDialog.Builder(this)
+                    .setTitle("Restore Data")
+                    .setMessage("This will replace all current products and recipes with the backup from Google Drive. Continue?")
+                    .setPositiveButton("Restore", (d, w) -> performRestore())
+                    .setNegativeButton("Cancel", null)
+                    .show();
+        });
     }
 
     @Override
@@ -141,9 +155,11 @@ public class SettingsActivity extends AppCompatActivity {
         if (account != null) {
             tvAccountName.setText("Connected: " + account);
             btnConnectDrive.setText("Switch Account");
+            btnRestoreData.setEnabled(true);
         } else {
             tvAccountName.setText("Not Connected");
             btnConnectDrive.setText("Connect Google Drive");
+            btnRestoreData.setEnabled(false);
         }
 
         switchAutoBackup.setChecked(prefs.getBoolean("autoBackup", false));
@@ -164,21 +180,18 @@ public class SettingsActivity extends AppCompatActivity {
                     btnBackupNow.setText("Syncing Data...");
                 });
                 
-                // 1. Generate PDF
-                File reportFile = PdfReportGenerator.generateDailyReport(this, System.currentTimeMillis());
+                DriveBackupManager backupManager = new DriveBackupManager(this, account);
 
-                // 2. Upload to Drive
-                GoogleDriveHelper driveHelper = new GoogleDriveHelper(this, account);
-                
-                // Folder structure: CafeReports / Year / Month
-                String rootId = driveHelper.getOrCreateFolder("CafeReports", null);
-                String yearId = driveHelper.getOrCreateFolder(new SimpleDateFormat("yyyy", Locale.getDefault()).format(new Date()), rootId);
-                String monthId = driveHelper.getOrCreateFolder(new SimpleDateFormat("MMMM", Locale.getDefault()).format(new Date()), yearId);
-                
-                driveHelper.uploadFile(reportFile, "application/pdf", monthId);
+                // 1. Generate & Upload PDF Report
+                long now = System.currentTimeMillis();
+                File reportFile = PdfReportGenerator.generateDailyReport(this, now);
+                backupManager.uploadDailyReport(reportFile, now);
 
-                String now = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault()).format(new Date());
-                prefs.edit().putString("lastBackup", now).apply();
+                // 2. Backup Master Data (JSON)
+                backupManager.uploadDataBackup();
+
+                String timeStr = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault()).format(new Date());
+                prefs.edit().putString("lastBackup", timeStr).apply();
 
                 runOnUiThread(() -> {
                     updateUI();
@@ -193,6 +206,37 @@ public class SettingsActivity extends AppCompatActivity {
                     btnBackupNow.setEnabled(true);
                     btnBackupNow.setText("Sync Data Now");
                     Toast.makeText(this, "Backup Failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+            }
+        }).start();
+    }
+
+    private void performRestore() {
+        String account = prefs.getString("googleAccount", null);
+        if (account == null) return;
+
+        new Thread(() -> {
+            try {
+                runOnUiThread(() -> {
+                    btnRestoreData.setEnabled(false);
+                    btnRestoreData.setText("Restoring...");
+                });
+
+                DriveBackupManager backupManager = new DriveBackupManager(this, account);
+                backupManager.restoreDataBackup();
+
+                runOnUiThread(() -> {
+                    btnRestoreData.setEnabled(true);
+                    btnRestoreData.setText("Restore Master Data");
+                    Toast.makeText(this, "Restore Successful!", Toast.LENGTH_SHORT).show();
+                });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(() -> {
+                    btnRestoreData.setEnabled(true);
+                    btnRestoreData.setText("Restore Master Data");
+                    Toast.makeText(this, "Restore Failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
             }
         }).start();

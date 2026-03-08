@@ -18,11 +18,11 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnLogin;
 
     // Hardcoded credentials
-    private static final String OWNER_ID = "owner123";
-    private static final String OWNER_PW = "owner@cafe";
+    private static final String OWNER_ID = "1111";
+    private static final String OWNER_PW = "1111";
     
-    private static final String WORKER_ID = "worker123";
-    private static final String WORKER_PW = "worker@cafe";
+    private static final String WORKER_ID = "2222";
+    private static final String WORKER_PW = "2222";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

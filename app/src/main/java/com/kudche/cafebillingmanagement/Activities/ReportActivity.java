@@ -26,13 +26,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
+import com.kudche.cafebillingmanagement.BackupManager.DriveBackupManager;
 import com.kudche.cafebillingmanagement.Dao.SaleDao;
 import com.kudche.cafebillingmanagement.Database.AppDatabase;
 import com.kudche.cafebillingmanagement.Models.Product;
 import com.kudche.cafebillingmanagement.Models.Sale;
 import com.kudche.cafebillingmanagement.Models.SaleItem;
 import com.kudche.cafebillingmanagement.R;
-import com.kudche.cafebillingmanagement.Utils.GoogleDriveHelper;
 import com.kudche.cafebillingmanagement.Utils.PdfReportGenerator;
 
 import java.io.File;
@@ -153,16 +153,15 @@ public class ReportActivity extends AppCompatActivity {
 
         Executors.newSingleThreadExecutor().execute(() -> {
             try {
-                // Generate detailed PDF for the currently selected range
+                // 1. Generate report
                 File reportFile = PdfReportGenerator.generateDailyReport(this, startDate, endDate);
 
-                // 2. Upload to Drive
-                GoogleDriveHelper driveHelper = new GoogleDriveHelper(this, account);
-                String rootId = driveHelper.getOrCreateFolder("CafeReports", null);
-                String yearId = driveHelper.getOrCreateFolder(new SimpleDateFormat("yyyy", Locale.getDefault()).format(new Date()), rootId);
-                String monthId = driveHelper.getOrCreateFolder(new SimpleDateFormat("MMMM", Locale.getDefault()).format(new Date()), yearId);
+                // 2. Use DriveBackupManager for structured upload
+                DriveBackupManager backupManager = new DriveBackupManager(this, account);
+                backupManager.uploadDailyReport(reportFile, startDate);
                 
-                driveHelper.uploadFile(reportFile, "application/pdf", monthId);
+                // Also upload data backup while we are at it
+                backupManager.uploadDataBackup();
 
                 runOnUiThread(() -> {
                     btnManualBackup.setEnabled(true);

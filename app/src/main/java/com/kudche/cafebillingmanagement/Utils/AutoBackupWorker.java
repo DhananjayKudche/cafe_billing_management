@@ -6,6 +6,8 @@ import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
+import com.kudche.cafebillingmanagement.BackupManager.DriveBackupManager;
+
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -31,21 +33,19 @@ public class AutoBackupWorker extends Worker {
         }
 
         try {
-            // 1. Generate PDF for yesterday (usually daily backup runs at midnight or end of day)
-            // For simplicity, we'll backup whatever the current day's report is at the time of execution
-            File reportFile = PdfReportGenerator.generateDailyReport(context, System.currentTimeMillis());
-
-            // 2. Upload to Drive
-            GoogleDriveHelper driveHelper = new GoogleDriveHelper(context, account);
+            DriveBackupManager backupManager = new DriveBackupManager(context, account);
             
-            String rootId = driveHelper.getOrCreateFolder("CafeReports", null);
-            String yearId = driveHelper.getOrCreateFolder(new SimpleDateFormat("yyyy", Locale.getDefault()).format(new Date()), rootId);
-            String monthId = driveHelper.getOrCreateFolder(new SimpleDateFormat("MMMM", Locale.getDefault()).format(new Date()), yearId);
-            
-            driveHelper.uploadFile(reportFile, "application/pdf", monthId);
+            // 1. Backup Bills (Daily Report)
+            // Generate PDF for the current state (as a daily snapshot)
+            long now = System.currentTimeMillis();
+            File reportFile = PdfReportGenerator.generateDailyReport(context, now);
+            backupManager.uploadDailyReport(reportFile, now);
 
-            String now = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault()).format(new Date());
-            prefs.edit().putString("lastBackup", now).apply();
+            // 2. Backup Data (Products & Raw Materials)
+            backupManager.uploadDataBackup();
+
+            String timeStr = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault()).format(new Date());
+            prefs.edit().putString("lastBackup", timeStr).apply();
 
             return Result.success();
         } catch (Exception e) {
