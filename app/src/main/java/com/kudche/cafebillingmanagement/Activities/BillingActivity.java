@@ -10,7 +10,6 @@ import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
@@ -32,6 +31,7 @@ import com.kudche.cafebillingmanagement.R;
 import com.kudche.cafebillingmanagement.Repository.SaleRepository;
 import com.kudche.cafebillingmanagement.Utils.PrinterUtils;
 import com.kudche.cafebillingmanagement.Utils.StockManager;
+import com.kudche.cafebillingmanagement.Utils.ToastUtils;
 import com.kudche.cafebillingmanagement.ViewModel.ProductViewModel;
 
 import java.util.ArrayList;
@@ -111,7 +111,7 @@ public class BillingActivity extends AppCompatActivity
         
         continueBtn.setOnClickListener(v -> {
             if (cartItems.isEmpty()) {
-                Toast.makeText(this, "Please select at least one item", Toast.LENGTH_SHORT).show();
+                ToastUtils.showInfo(this, "Please select at least one item");
             } else {
                 showCheckout();
             }
@@ -210,7 +210,7 @@ public class BillingActivity extends AppCompatActivity
 
     private void checkStockAndProceed() {
         if(cartItems.isEmpty()){
-            Toast.makeText(this, "Cart Empty", Toast.LENGTH_SHORT).show();
+            ToastUtils.showInfo(this, "Cart Empty");
             return;
         }
 
@@ -257,7 +257,7 @@ public class BillingActivity extends AppCompatActivity
             @Override
             public void onSuccess(Sale sale, List<SaleItem> items) {
                 runOnUiThread(() -> {
-                    Toast.makeText(BillingActivity.this, isEmergency ? "Emergency Sale Recorded" : "Sale Completed", Toast.LENGTH_SHORT).show();
+                    ToastUtils.showSuccess(BillingActivity.this, isEmergency ? "Emergency Sale Recorded" : "Sale Completed");
                     
                     // Trigger Print
                     PrinterUtils.printReceipt(BillingActivity.this, sale, items);
@@ -272,7 +272,7 @@ public class BillingActivity extends AppCompatActivity
 
             @Override
             public void onError(String message) {
-                runOnUiThread(() -> Toast.makeText(BillingActivity.this, "Error: " + message, Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> ToastUtils.showError(BillingActivity.this, message));
             }
         });
     }

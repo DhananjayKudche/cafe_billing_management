@@ -15,7 +15,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -34,6 +33,7 @@ import com.kudche.cafebillingmanagement.Models.Sale;
 import com.kudche.cafebillingmanagement.Models.SaleItem;
 import com.kudche.cafebillingmanagement.R;
 import com.kudche.cafebillingmanagement.Utils.PdfReportGenerator;
+import com.kudche.cafebillingmanagement.Utils.ToastUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -144,7 +144,7 @@ public class ReportActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("CafePrefs", MODE_PRIVATE);
         String account = prefs.getString("googleAccount", null);
         if (account == null) {
-            Toast.makeText(this, "Please connect Google Drive in Settings first", Toast.LENGTH_LONG).show();
+            ToastUtils.showInfo(this, "Please connect Google Drive in Settings first");
             return;
         }
 
@@ -166,14 +166,14 @@ public class ReportActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     btnManualBackup.setEnabled(true);
                     btnManualBackup.setText("Manual Backup to Drive");
-                    Toast.makeText(this, "Backup Successful!", Toast.LENGTH_SHORT).show();
+                    ToastUtils.showSuccess(this, "Backup Successful!");
                 });
             } catch (Exception e) {
                 e.printStackTrace();
                 runOnUiThread(() -> {
                     btnManualBackup.setEnabled(true);
                     btnManualBackup.setText("Manual Backup to Drive");
-                    Toast.makeText(this, "Backup Failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    ToastUtils.showError(this, "Backup Failed");
                 });
             }
         });
@@ -196,9 +196,9 @@ public class ReportActivity extends AppCompatActivity {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Permission Granted. Click Export again.", Toast.LENGTH_SHORT).show();
+                ToastUtils.showSuccess(this, "Permission Granted. Click Export again.");
             } else {
-                Toast.makeText(this, "Permission Denied. Cannot save to storage.", Toast.LENGTH_SHORT).show();
+                ToastUtils.showError(this, "Permission Denied.");
             }
         }
     }
@@ -327,7 +327,7 @@ public class ReportActivity extends AppCompatActivity {
 
     private void exportCSV() {
         if (currentDetailedOrders.isEmpty()) {
-            Toast.makeText(this, "No data to export", Toast.LENGTH_SHORT).show();
+            ToastUtils.showInfo(this, "No data to export");
             return;
         }
         
@@ -366,7 +366,7 @@ public class ReportActivity extends AppCompatActivity {
 
     private void exportPDF() {
         if (currentDetailedOrders.isEmpty()) {
-            Toast.makeText(this, "No data to export", Toast.LENGTH_SHORT).show();
+            ToastUtils.showInfo(this, "No data to export");
             return;
         }
 
@@ -386,7 +386,7 @@ public class ReportActivity extends AppCompatActivity {
                 });
             } catch (IOException e) {
                 e.printStackTrace();
-                runOnUiThread(() -> Toast.makeText(this, "Error generating PDF: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                runOnUiThread(() -> ToastUtils.showError(this, "Error generating PDF"));
             }
         });
     }
@@ -405,7 +405,7 @@ public class ReportActivity extends AppCompatActivity {
                 try (OutputStream outputStream = getContentResolver().openOutputStream(uri)) {
                     if (outputStream == null) throw new IOException("Failed to open output stream.");
                     outputStream.write(data);
-                    Toast.makeText(this, "Saved to Downloads: " + fileName, Toast.LENGTH_LONG).show();
+                    ToastUtils.showSuccess(this, "Saved: " + fileName);
                 }
             } else {
                 File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
@@ -413,12 +413,12 @@ public class ReportActivity extends AppCompatActivity {
                 File file = new File(path, fileName);
                 try (FileOutputStream fos = new FileOutputStream(file)) {
                     fos.write(data);
-                    Toast.makeText(this, "Saved: " + file.getAbsolutePath(), Toast.LENGTH_LONG).show();
+                    ToastUtils.showSuccess(this, "Saved: " + fileName);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, "Export Failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            ToastUtils.showError(this, "Export Failed");
         }
     }
 

@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -19,6 +18,7 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import com.kudche.cafebillingmanagement.Adapters.RawMaterialAdapter;
 import com.kudche.cafebillingmanagement.Models.RawMaterial;
 import com.kudche.cafebillingmanagement.R;
+import com.kudche.cafebillingmanagement.Utils.ToastUtils;
 import com.kudche.cafebillingmanagement.ViewModel.RawMaterialViewModel;
 
 public class RawMaterialActivity extends AppCompatActivity {
@@ -55,7 +55,7 @@ public class RawMaterialActivity extends AppCompatActivity {
                             .setMessage("Are you sure you want to delete " + material.name + "?")
                             .setPositiveButton("Delete", (dialog, which) -> {
                                 viewModel.delete(material);
-                                Toast.makeText(this, material.name + " deleted", Toast.LENGTH_SHORT).show();
+                                ToastUtils.showInfo(this, material.name + " deleted");
                             })
                             .setNegativeButton("Cancel", null)
                             .show();

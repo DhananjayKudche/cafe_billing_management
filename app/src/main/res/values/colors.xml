@@ -23,4 +23,10 @@
     <color name="background_cafe">@color/cafe_beige</color>
     <color name="text_primary_cafe">@color/cafe_dark</color>
     <color name="text_secondary_cafe">@color/cafe_medium</color>
+
+    <!-- UI Message Colors -->
+    <color name="success_green">#2E7D32</color>
+    <color name="error_red">#C62828</color>
+    <color name="info_blue">#1565C0</color>
+    <color name="warning_orange">#EF6C00</color>
 </resources>

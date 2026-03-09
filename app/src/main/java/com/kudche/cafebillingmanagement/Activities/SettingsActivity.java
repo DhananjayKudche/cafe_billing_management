@@ -8,7 +8,6 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -34,6 +33,7 @@ import com.kudche.cafebillingmanagement.BackupManager.DriveBackupManager;
 import com.kudche.cafebillingmanagement.R;
 import com.kudche.cafebillingmanagement.Utils.AutoBackupWorker;
 import com.kudche.cafebillingmanagement.Utils.PdfReportGenerator;
+import com.kudche.cafebillingmanagement.Utils.ToastUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -90,13 +90,12 @@ public class SettingsActivity extends AppCompatActivity {
                         String message;
                         switch (statusCode) {
                             case 7: message = "Network Error. Check your internet."; break;
-                            case 10: message = "Developer Error (10): Likely SHA-1 or Package Name mismatch in Google Console."; break;
-                            case 12500: message = "Sign-in Failed (12500): Check if Google Play Services is updated or SHA-1 is correct."; break;
-                            case 12501: message = "Sign-in Cancelled by user."; break;
-                            case 12502: message = "Sign-in in progress elsewhere."; break;
-                            default: message = "Sign-in error (Code: " + statusCode + "). " + e.getLocalizedMessage(); break;
+                            case 10: message = "Developer Error (10): Likely SHA-1 mismatch."; break;
+                            case 12500: message = "Sign-in Failed (12500)."; break;
+                            case 12501: message = "Sign-in Cancelled."; break;
+                            default: message = "Sign-in error: " + statusCode; break;
                         }
-                        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+                        ToastUtils.showError(this, message);
                     }
                 }
         );
@@ -108,7 +107,6 @@ public class SettingsActivity extends AppCompatActivity {
                     .build();
             GoogleSignInClient client = GoogleSignIn.getClient(this, gso);
             
-            // Sign out first to ensure the account picker always shows up
             client.signOut().addOnCompleteListener(task -> {
                 googleSignInLauncher.launch(client.getSignInIntent());
             });
@@ -128,7 +126,7 @@ public class SettingsActivity extends AppCompatActivity {
         btnRestoreData.setOnClickListener(v -> {
             new AlertDialog.Builder(this)
                     .setTitle("Restore Data")
-                    .setMessage("This will replace all current products and recipes with the backup from Google Drive. Continue?")
+                    .setMessage("This will replace current data with Google Drive backup. Continue?")
                     .setPositiveButton("Restore", (d, w) -> performRestore())
                     .setNegativeButton("Cancel", null)
                     .show();
@@ -159,21 +157,19 @@ public class SettingsActivity extends AppCompatActivity {
                 androidx.work.ExistingPeriodicWorkPolicy.KEEP,
                 backupRequest);
         
-        Toast.makeText(this, "Auto Backup Scheduled", Toast.LENGTH_SHORT).show();
+        ToastUtils.showSuccess(this, "Auto Backup Scheduled");
     }
 
     private void cancelAutoBackup() {
         WorkManager.getInstance(this).cancelUniqueWork("DailyBackup");
-        Toast.makeText(this, "Auto Backup Disabled", Toast.LENGTH_SHORT).show();
+        ToastUtils.showInfo(this, "Auto Backup Disabled");
     }
 
     private void handleSignInSuccess(GoogleSignInAccount account) {
         if (account.getEmail() != null) {
             prefs.edit().putString("googleAccount", account.getEmail()).apply();
             updateUI();
-            Toast.makeText(this, "Connected: " + account.getEmail(), Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "Connected, but could not get email address.", Toast.LENGTH_SHORT).show();
+            ToastUtils.showSuccess(this, "Connected: " + account.getEmail());
         }
     }
 
@@ -196,7 +192,7 @@ public class SettingsActivity extends AppCompatActivity {
     private void performBackup() {
         String account = prefs.getString("googleAccount", null);
         if (account == null) {
-            Toast.makeText(this, "Please connect Google Drive first", Toast.LENGTH_SHORT).show();
+            ToastUtils.showInfo(this, "Please connect Google Drive first");
             return;
         }
 
@@ -204,35 +200,30 @@ public class SettingsActivity extends AppCompatActivity {
             try {
                 runOnUiThread(() -> {
                     btnBackupNow.setEnabled(false);
-                    btnBackupNow.setText("Syncing Data...");
+                    btnBackupNow.setText("Syncing...");
                 });
                 
                 DriveBackupManager backupManager = new DriveBackupManager(this, account);
-
-                // 1. Generate & Upload PDF Report
                 long now = System.currentTimeMillis();
                 File reportFile = PdfReportGenerator.generateDailyReport(this, now);
                 backupManager.uploadDailyReport(reportFile, now);
-
-                // 2. Backup Master Data (JSON)
                 backupManager.uploadDataBackup();
 
-                String timeStr = new SimpleDateFormat("dd MMM yyyy HH:mm", Locale.getDefault()).format(new Date());
+                String timeStr = new SimpleDateFormat("dd MMM HH:mm", Locale.getDefault()).format(new Date());
                 prefs.edit().putString("lastBackup", timeStr).apply();
 
                 runOnUiThread(() -> {
                     updateUI();
                     btnBackupNow.setEnabled(true);
                     btnBackupNow.setText("Sync Data Now");
-                    Toast.makeText(this, "Backup Successful!", Toast.LENGTH_SHORT).show();
+                    ToastUtils.showSuccess(this, "Backup Successful!");
                 });
 
             } catch (Exception e) {
-                e.printStackTrace();
                 runOnUiThread(() -> {
                     btnBackupNow.setEnabled(true);
                     btnBackupNow.setText("Sync Data Now");
-                    Toast.makeText(this, "Backup Failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    ToastUtils.showError(this, "Backup Failed");
                 });
             }
         }).start();
@@ -255,15 +246,14 @@ public class SettingsActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     btnRestoreData.setEnabled(true);
                     btnRestoreData.setText("Restore Master Data");
-                    Toast.makeText(this, "Restore Successful!", Toast.LENGTH_SHORT).show();
+                    ToastUtils.showSuccess(this, "Restore Successful!");
                 });
 
             } catch (Exception e) {
-                e.printStackTrace();
                 runOnUiThread(() -> {
                     btnRestoreData.setEnabled(true);
                     btnRestoreData.setText("Restore Master Data");
-                    Toast.makeText(this, "Restore Failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    ToastUtils.showError(this, "Restore Failed");
                 });
             }
         }).start();

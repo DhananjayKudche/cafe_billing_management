@@ -12,7 +12,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -26,6 +25,7 @@ import com.kudche.cafebillingmanagement.Models.Sale;
 import com.kudche.cafebillingmanagement.Models.SaleItem;
 import com.kudche.cafebillingmanagement.R;
 import com.kudche.cafebillingmanagement.Repository.SaleRepository;
+import com.kudche.cafebillingmanagement.Utils.ToastUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -142,7 +142,6 @@ public class SaleHistoryActivity extends AppCompatActivity {
             holder.expandIcon.setOnClickListener(v -> toggleDetails(holder, sale));
             holder.itemView.setOnClickListener(v -> toggleDetails(holder, sale));
 
-            // Only OWNER can delete orders
             if ("OWNER".equals(userRole)) {
                 holder.btnDeleteSale.setVisibility(View.VISIBLE);
                 holder.btnDeleteSale.setOnClickListener(v -> {
@@ -151,7 +150,7 @@ public class SaleHistoryActivity extends AppCompatActivity {
                             .setMessage("Are you sure you want to delete this order? This will revert the stock deductions.")
                             .setPositiveButton("Delete", (dialog, which) -> {
                                 repository.deleteSale(sale.id, () -> {
-                                    holder.itemView.post(() -> Toast.makeText(holder.itemView.getContext(), "Order Deleted", Toast.LENGTH_SHORT).show());
+                                    holder.itemView.post(() -> ToastUtils.showInfo(holder.itemView.getContext(), "Order Deleted"));
                                 });
                             })
                             .setNegativeButton("Cancel", null)

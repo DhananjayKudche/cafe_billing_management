@@ -1,12 +1,9 @@
 package com.kudche.cafebillingmanagement.Activities;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -21,6 +18,7 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import com.kudche.cafebillingmanagement.Adapters.ProductAdapter;
 import com.kudche.cafebillingmanagement.Models.Product;
 import com.kudche.cafebillingmanagement.R;
+import com.kudche.cafebillingmanagement.Utils.ToastUtils;
 import com.kudche.cafebillingmanagement.ViewModel.ProductViewModel;
 
 public class ProductListActivity extends AppCompatActivity implements ProductAdapter.OnEditClick, ProductAdapter.OnDeleteClick {
@@ -118,7 +116,7 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
                 .setMessage("Are you sure you want to delete " + product.name + "?")
                 .setPositiveButton("Delete", (dialog, which) -> {
                     viewModel.delete(product);
-                    Toast.makeText(this, "Product deleted", Toast.LENGTH_SHORT).show();
+                    ToastUtils.showInfo(this, "Product deleted");
                 })
                 .setNegativeButton("Cancel", null)
                 .show();

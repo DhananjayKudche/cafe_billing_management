@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -24,6 +23,7 @@ import com.kudche.cafebillingmanagement.Models.DayClose;
 import com.kudche.cafebillingmanagement.Models.DayCloseItem;
 import com.kudche.cafebillingmanagement.Models.RawMaterial;
 import com.kudche.cafebillingmanagement.R;
+import com.kudche.cafebillingmanagement.Utils.ToastUtils;
 import com.kudche.cafebillingmanagement.Utils.UnitConverter;
 
 import java.util.ArrayList;
@@ -130,7 +130,7 @@ public class DayCloseActivity extends AppCompatActivity {
             });
 
             runOnUiThread(() -> {
-                Toast.makeText(this, "Day Close Submitted Successfully", Toast.LENGTH_SHORT).show();
+                ToastUtils.showSuccess(this, "Day Close Submitted Successfully");
                 finish();
             });
         });
@@ -182,9 +182,6 @@ public class DayCloseActivity extends AppCompatActivity {
 
             holder.expected.setText(String.format(Locale.getDefault(), "%.2f %s", displayValue, displayUnit));
             
-            // Actual Stock is edited in base units by default for simplicity, 
-            // but we can pre-fill it in display units if desired. 
-            // For now, let's keep it pre-filled with the same value as system stock.
             holder.actual.setText(String.format(Locale.getDefault(), "%.2f", displayValue));
             
             final String finalDisplayUnit = displayUnit;
@@ -194,7 +191,6 @@ public class DayCloseActivity extends AppCompatActivity {
                 @Override public void afterTextChanged(Editable s) {
                     try {
                         double val = Double.parseDouble(s.toString());
-                        // Convert back to base unit for storage
                         item.actualStock = UnitConverter.convertToBaseUnit(val, finalDisplayUnit);
                     } catch (Exception e) {
                         item.actualStock = 0;

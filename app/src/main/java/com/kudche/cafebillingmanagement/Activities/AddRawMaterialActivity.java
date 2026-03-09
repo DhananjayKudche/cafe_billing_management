@@ -2,21 +2,19 @@ package com.kudche.cafebillingmanagement.Activities;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.kudche.cafebillingmanagement.Models.RawMaterial;
 import com.kudche.cafebillingmanagement.R;
+import com.kudche.cafebillingmanagement.Utils.ToastUtils;
 import com.kudche.cafebillingmanagement.Utils.UnitConverter;
 import com.kudche.cafebillingmanagement.ViewModel.RawMaterialViewModel;
 
@@ -67,7 +65,6 @@ public class AddRawMaterialActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     if(material != null){
                         nameInput.setText(material.name);
-                        // Display in base unit for simplicity in edit mode
                         stockInput.setText(String.valueOf(material.currentStock));
                         String baseUnit = material.unit;
                         for(int i = 0; i < displayUnits.length; i++){
@@ -87,12 +84,11 @@ public class AddRawMaterialActivity extends AppCompatActivity {
             String stockStr = stockInput.getText().toString().trim();
 
             if(TextUtils.isEmpty(name) || TextUtils.isEmpty(stockStr)){
-                Toast.makeText(this,"Please fill all fields",Toast.LENGTH_SHORT).show();
+                ToastUtils.showInfo(this, "Please fill all fields");
                 return;
             }
 
             double inputValue = Double.parseDouble(stockStr);
-            // Convert to base unit (KG, LITER, PCS) before saving
             double baseStock = UnitConverter.convertToBaseUnit(inputValue, selectedUnit);
             String baseUnitName = UnitConverter.getBaseUnit(selectedUnit);
 
@@ -103,11 +99,11 @@ public class AddRawMaterialActivity extends AppCompatActivity {
 
             if(materialId == -1){
                 viewModel.insert(material);
-                Toast.makeText(this,"Raw material added",Toast.LENGTH_SHORT).show();
+                ToastUtils.showSuccess(this, "Raw material added");
             }else{
                 material.id = materialId;
                 viewModel.update(material);
-                Toast.makeText(this,"Raw material updated",Toast.LENGTH_SHORT).show();
+                ToastUtils.showSuccess(this, "Raw material updated");
             }
             finish();
         });

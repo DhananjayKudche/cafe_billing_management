@@ -15,7 +15,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -29,6 +28,7 @@ import com.kudche.cafebillingmanagement.Models.Product;
 import com.kudche.cafebillingmanagement.Models.ProductRawMaterial;
 import com.kudche.cafebillingmanagement.Models.RawMaterial;
 import com.kudche.cafebillingmanagement.R;
+import com.kudche.cafebillingmanagement.Utils.ToastUtils;
 import com.kudche.cafebillingmanagement.Utils.UnitConverter;
 import com.kudche.cafebillingmanagement.ViewModel.ProductViewModel;
 import com.kudche.cafebillingmanagement.ViewModel.RawMaterialViewModel;
@@ -155,7 +155,7 @@ public class AddProductActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, "Failed to save image", Toast.LENGTH_SHORT).show();
+            ToastUtils.showError(this, "Failed to save image");
         }
     }
 
@@ -318,7 +318,7 @@ public class AddProductActivity extends AppCompatActivity {
         String category = categorySpinner.getSelectedItem().toString();
 
         if (name.isEmpty() || priceStr.isEmpty()) {
-            Toast.makeText(this, "Please enter name and price", Toast.LENGTH_SHORT).show();
+            ToastUtils.showInfo(this, "Please enter name and price");
             return;
         }
 
@@ -333,9 +333,11 @@ public class AddProductActivity extends AppCompatActivity {
 
         if(productId == -1){
             viewModel.insertProduct(product, selectedMaterials);
+            ToastUtils.showSuccess(this, "Product Added");
         } else {
             product.id = productId;
             viewModel.updateProduct(product, selectedMaterials);
+            ToastUtils.showSuccess(this, "Product Updated");
         }
         finish();
     }

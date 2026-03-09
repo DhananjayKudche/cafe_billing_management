@@ -4,13 +4,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.kudche.cafebillingmanagement.MainActivity;
 import com.kudche.cafebillingmanagement.R;
+import com.kudche.cafebillingmanagement.Utils.ToastUtils;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
         String password = etPassword.getText().toString().trim();
 
         if (userId.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Please enter all fields", Toast.LENGTH_SHORT).show();
+            ToastUtils.showInfo(this, "Please enter all fields");
             return;
         }
 
@@ -67,10 +67,10 @@ public class LoginActivity extends AppCompatActivity {
             editor.putString("userId", userId);
             editor.apply();
 
-            Toast.makeText(this, "Login Successful as " + role, Toast.LENGTH_SHORT).show();
+            ToastUtils.showSuccess(this, "Login Successful as " + role);
             startMainActivity();
         } else {
-            Toast.makeText(this, "Invalid Credentials", Toast.LENGTH_SHORT).show();
+            ToastUtils.showError(this, "Invalid Credentials");
         }
     }
 
