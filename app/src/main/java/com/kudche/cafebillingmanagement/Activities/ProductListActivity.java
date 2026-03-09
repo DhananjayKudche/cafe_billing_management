@@ -1,8 +1,11 @@
 package com.kudche.cafebillingmanagement.Activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -13,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.kudche.cafebillingmanagement.Adapters.ProductAdapter;
 import com.kudche.cafebillingmanagement.Models.Product;
@@ -23,6 +27,7 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
 
     private ProductViewModel viewModel;
     private ProductAdapter adapter;
+    private String currentCategory = "Cafe Category";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +41,9 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
+        ImageButton logoutBtn = findViewById(R.id.logoutBtn);
+        logoutBtn.setOnClickListener(v -> showLogoutDialog());
+
         RecyclerView recyclerView = findViewById(R.id.productRecycler);
         ExtendedFloatingActionButton addFab = findViewById(R.id.addProductFab);
 
@@ -44,16 +52,47 @@ public class ProductListActivity extends AppCompatActivity implements ProductAda
         recyclerView.setAdapter(adapter);
 
         viewModel = new ViewModelProvider(this).get(ProductViewModel.class);
-        viewModel.getProducts().observe(this, products -> {
-            if (products != null) {
-                adapter.setList(products);
+        
+        ChipGroup categoryChipGroup = findViewById(R.id.categoryChipGroup);
+        categoryChipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            if (checkedIds.contains(R.id.chipCafe)) {
+                currentCategory = "Cafe Category";
+            } else if (checkedIds.contains(R.id.chipJuice)) {
+                currentCategory = "Juice Category";
             }
+            observeProducts();
         });
+
+        observeProducts();
 
         addFab.setOnClickListener(v -> {
             Intent intent = new Intent(this, AddProductActivity.class);
             startActivity(intent);
         });
+    }
+
+    private void observeProducts() {
+        viewModel.getProductsByCategory(currentCategory).removeObservers(this);
+        viewModel.getProductsByCategory(currentCategory).observe(this, products -> {
+            if (products != null) {
+                adapter.setList(products);
+            }
+        });
+    }
+
+    private void showLogoutDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setPositiveButton("Logout", (d, w) -> {
+                    getSharedPreferences("CafePrefs", MODE_PRIVATE).edit().clear().apply();
+                    Intent intent = new Intent(this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     @Override

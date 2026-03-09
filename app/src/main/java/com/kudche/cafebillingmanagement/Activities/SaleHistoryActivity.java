@@ -1,5 +1,6 @@
 package com.kudche.cafebillingmanagement.Activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -7,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -42,12 +44,11 @@ public class SaleHistoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sale_history);
 
-        // Set up toolbar back button
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setTitle("Sale History");
-        }
+        ImageButton backBtn = findViewById(R.id.backBtn);
+        ImageButton logoutBtn = findViewById(R.id.logoutBtn);
+
+        backBtn.setOnClickListener(v -> finish());
+        logoutBtn.setOnClickListener(v -> showLogoutDialog());
 
         saleRepository = new SaleRepository(this);
         RecyclerView recyclerView = findViewById(R.id.saleHistoryRecycler);
@@ -65,6 +66,21 @@ public class SaleHistoryActivity extends AppCompatActivity {
                 adapter.setSales(sales);
             }
         });
+    }
+
+    private void showLogoutDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setPositiveButton("Logout", (d, w) -> {
+                    getSharedPreferences("CafePrefs", MODE_PRIVATE).edit().clear().apply();
+                    Intent intent = new Intent(this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     @Override

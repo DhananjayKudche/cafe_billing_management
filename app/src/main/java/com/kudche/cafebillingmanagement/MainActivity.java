@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     CardView billingCard, historyCard, productCard, inventoryCard, dayCloseCard, reportsCard;
     ImageView ivSettings;
+    ImageButton ivLogout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +51,10 @@ public class MainActivity extends AppCompatActivity {
         dayCloseCard = findViewById(R.id.cardDayClose);
         reportsCard = findViewById(R.id.cardReports);
         ivSettings = findViewById(R.id.ivSettings);
+        ivLogout = findViewById(R.id.ivLogout);
         
-        // Owner logic: Billing should be removed from layout to avoid blank space
-        if ("OWNER".equals(role)) {
-            if (billingCard != null) {
-                billingCard.setVisibility(View.GONE);
-            }
+        if (ivLogout != null) {
+            ivLogout.setOnClickListener(v -> showLogoutDialog(prefs));
         }
 
         if (billingCard != null) {
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
         dayCloseCard.setOnClickListener(v ->
                 startActivity(new Intent(this, DayCloseActivity.class)));
 
-        if (reportsCard != null && reportsCard.getVisibility() == View.VISIBLE) {
+        if (reportsCard != null) {
             reportsCard.setOnClickListener(v ->
                     startActivity(new Intent(this, ReportActivity.class)));
         }
@@ -87,15 +88,6 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(new Intent(this, SettingsActivity.class)));
         }
         
-        // Logout functionality
-        View mainLayout = findViewById(R.id.main_layout);
-        if (mainLayout != null) {
-            mainLayout.setOnLongClickListener(v -> {
-                showLogoutDialog(prefs);
-                return true;
-            });
-        }
-
         // Request Printer Permissions on Start
         if (!PermissionHelper.hasPrintPermissions(this)) {
             PermissionHelper.requestPrintPermissions(this);
@@ -103,12 +95,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showLogoutDialog(SharedPreferences prefs) {
-        new androidx.appcompat.app.AlertDialog.Builder(this)
+        new AlertDialog.Builder(this)
                 .setTitle("Logout")
                 .setMessage("Do you want to logout?")
                 .setPositiveButton("Logout", (d, w) -> {
                     prefs.edit().clear().apply();
-                    startActivity(new Intent(this, LoginActivity.class));
+                    Intent intent = new Intent(this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
                     finish();
                 })
                 .setNegativeButton("Cancel", null)

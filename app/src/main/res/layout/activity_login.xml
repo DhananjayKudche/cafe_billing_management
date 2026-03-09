@@ -26,11 +26,11 @@
             android:gravity="center">
 
             <ImageView
-                android:layout_width="120dp"
+                android:layout_width="230dp"
                 android:layout_height="120dp"
-                android:src="@mipmap/ic_launcher_round"
+                android:src="@drawable/aarambh_cafe_logo"
                 android:layout_marginBottom="24dp"
-                app:tint="@color/cafe_primary" />
+                android:scaleType="centerInside" />
 
             <TextView
                 android:layout_width="wrap_content"

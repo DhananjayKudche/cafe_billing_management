@@ -29,6 +29,7 @@ import com.kudche.cafebillingmanagement.Models.Product;
 import com.kudche.cafebillingmanagement.Models.ProductRawMaterial;
 import com.kudche.cafebillingmanagement.Models.RawMaterial;
 import com.kudche.cafebillingmanagement.R;
+import com.kudche.cafebillingmanagement.Utils.UnitConverter;
 import com.kudche.cafebillingmanagement.ViewModel.ProductViewModel;
 import com.kudche.cafebillingmanagement.ViewModel.RawMaterialViewModel;
 
@@ -210,50 +211,59 @@ public class AddProductActivity extends AppCompatActivity {
 
     private void showMaterialSelector(ProductRawMaterial existingMapping) {
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_material, null);
-        Spinner spinner = view.findViewById(R.id.rawMaterialSpinner);
+        Spinner rawSpinner = view.findViewById(R.id.rawMaterialSpinner);
         EditText qtyInput = view.findViewById(R.id.quantityInput);
-        TextView unitText = view.findViewById(R.id.unitText);
+        Spinner unitSpinner = view.findViewById(R.id.unitSpinner);
 
-        ArrayAdapter<RawMaterial> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, rawMaterials);
-        spinner.setAdapter(adapter);
+        ArrayAdapter<RawMaterial> rawAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, rawMaterials);
+        rawSpinner.setAdapter(rawAdapter);
+
+        rawSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                RawMaterial selected = rawMaterials.get(position);
+                String baseUnit = UnitConverter.getBaseUnit(selected.unit);
+                String[] relatedUnits = UnitConverter.getRelatedUnits(baseUnit);
+                
+                ArrayAdapter<String> uAdapter = new ArrayAdapter<>(AddProductActivity.this, android.R.layout.simple_spinner_dropdown_item, relatedUnits);
+                unitSpinner.setAdapter(uAdapter);
+            }
+            @Override public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
         if (existingMapping != null) {
-            qtyInput.setText(String.valueOf(existingMapping.quantityRequired));
             for (int i = 0; i < rawMaterials.size(); i++) {
                 if (rawMaterials.get(i).id == existingMapping.rawMaterialId) {
-                    spinner.setSelection(i);
-                    unitText.setText(rawMaterials.get(i).unit);
+                    rawSpinner.setSelection(i);
+                    // Qty is stored in base unit, so we display it in base unit initially
+                    qtyInput.setText(String.valueOf(existingMapping.quantityRequired));
                     break;
                 }
             }
         }
 
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                unitText.setText(rawMaterials.get(position).unit);
-            }
-            @Override public void onNothingSelected(AdapterView<?> parent) {}
-        });
-
         new AlertDialog.Builder(this)
                 .setTitle(existingMapping == null ? "Add Raw Material" : "Edit Raw Material")
                 .setView(view)
                 .setPositiveButton(existingMapping == null ? "Add" : "Update", (d, w) -> {
-                    RawMaterial selected = (RawMaterial) spinner.getSelectedItem();
+                    RawMaterial selected = (RawMaterial) rawSpinner.getSelectedItem();
                     String qtyStr = qtyInput.getText().toString();
+                    String selectedUnit = unitSpinner.getSelectedItem().toString();
+                    
                     if(qtyStr.isEmpty()) return;
 
                     double qty = Double.parseDouble(qtyStr);
+                    // Convert to base unit for storage
+                    double baseQty = UnitConverter.convertToBaseUnit(qty, selectedUnit);
 
                     if (existingMapping == null) {
                         ProductRawMaterial mapping = new ProductRawMaterial();
                         mapping.rawMaterialId = selected.id;
-                        mapping.quantityRequired = qty;
+                        mapping.quantityRequired = baseQty;
                         selectedMaterials.add(mapping);
                     } else {
                         existingMapping.rawMaterialId = selected.id;
-                        existingMapping.quantityRequired = qty;
+                        existingMapping.quantityRequired = baseQty;
                     }
                     refreshMaterialList();
                 })
@@ -268,8 +278,26 @@ public class AddProductActivity extends AppCompatActivity {
         ImageView editIcon = view.findViewById(R.id.editMaterialIcon);
         ImageView deleteIcon = view.findViewById(R.id.deleteMaterialIcon);
 
-        String displayText = (raw != null) ? (raw.name + " - " + mapping.quantityRequired + " " + raw.unit)
-                                           : ("Unknown Material - " + mapping.quantityRequired);
+        String displayText;
+        if (raw != null) {
+            String baseUnit = UnitConverter.getBaseUnit(raw.unit);
+            double displayValue = mapping.quantityRequired;
+            String displayUnit = baseUnit;
+            
+            // Logic to show in smaller unit if it's small (e.g. 0.05 KG -> 50 GRAM)
+            if (baseUnit.equals(UnitConverter.UNIT_KG) && mapping.quantityRequired < 1.0) {
+                displayValue = UnitConverter.convertFromBaseUnit(mapping.quantityRequired, UnitConverter.UNIT_GRAM);
+                displayUnit = UnitConverter.UNIT_GRAM;
+            } else if (baseUnit.equals(UnitConverter.UNIT_LITER) && mapping.quantityRequired < 1.0) {
+                displayValue = UnitConverter.convertFromBaseUnit(mapping.quantityRequired, UnitConverter.UNIT_ML);
+                displayUnit = UnitConverter.UNIT_ML;
+            }
+            
+            displayText = raw.name + " - " + displayValue + " " + displayUnit;
+        } else {
+            displayText = "Unknown Material - " + mapping.quantityRequired;
+        }
+
         nameText.setText(displayText);
 
         deleteIcon.setOnClickListener(v -> {

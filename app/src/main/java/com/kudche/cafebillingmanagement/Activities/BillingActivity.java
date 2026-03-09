@@ -1,5 +1,6 @@
 package com.kudche.cafebillingmanagement.Activities;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -45,10 +46,6 @@ public class BillingActivity extends AppCompatActivity
     private List<CartItem> cartItems = new ArrayList<>();
     private List<Product> filteredProducts = new ArrayList<>();
 
-    private int productPage = 0;
-    private final int PORTRAIT_PAGE_SIZE = 6;
-    private final int LANDSCAPE_PAGE_SIZE = 10;
-
     private SaleRepository saleRepository;
     private CartAdapter cartAdapter;
     private BillingProductAdapter productAdapter;
@@ -57,10 +54,9 @@ public class BillingActivity extends AppCompatActivity
     private ProductViewModel productViewModel;
     private AppDatabase db;
 
-    private Button prevProductBtn, nextProductBtn;
     private Button continueBtn, cancelSelectionBtn, cancelCheckoutBtn;
     private CheckBox cbParcel;
-    private ImageButton backBtn;
+    private ImageButton backBtn, logoutBtn;
     private LinearLayout layoutProductSelection, layoutCheckout;
     private RecyclerView productRecycler;
 
@@ -89,16 +85,18 @@ public class BillingActivity extends AppCompatActivity
         totalAmount = findViewById(R.id.totalAmount);
 
         Button completeSaleBtn = findViewById(R.id.completeSale);
-        prevProductBtn = findViewById(R.id.prevProductBtn);
-        nextProductBtn = findViewById(R.id.nextProductBtn);
         backBtn = findViewById(R.id.backBtn);
+        logoutBtn = findViewById(R.id.logoutBtn);
         
         continueBtn = findViewById(R.id.continueBtn);
         cancelSelectionBtn = findViewById(R.id.cancelSelectionBtn);
         cancelCheckoutBtn = findViewById(R.id.cancelCheckoutBtn);
         cbParcel = findViewById(R.id.cbParcel);
 
-        // Visibility Logic for Back Button
+        // Visibility Logic for Back Button and Logout
+        logoutBtn.setVisibility(View.VISIBLE);
+        logoutBtn.setOnClickListener(v -> showLogoutDialog());
+
         if ("WORKER".equals(userRole)) {
             backBtn.setVisibility(View.GONE);
             cancelSelectionBtn.setText("Logout");
@@ -137,14 +135,10 @@ public class BillingActivity extends AppCompatActivity
             } else if (checkedIds.contains(R.id.chipJuice)) {
                 currentCategory = "Juice Category";
             }
-            productPage = 0;
             observeProducts();
         });
 
         observeProducts();
-
-        prevProductBtn.setOnClickListener(v -> { if (productPage > 0) { productPage--; updateProductList(); } });
-        nextProductBtn.setOnClickListener(v -> { if ((productPage + 1) * getPageSize() < filteredProducts.size()) { productPage++; updateProductList(); } });
 
         completeSaleBtn.setOnClickListener(v -> checkStockAndProceed());
         
@@ -172,10 +166,6 @@ public class BillingActivity extends AppCompatActivity
         productRecycler.setLayoutManager(new GridLayoutManager(this, spanCount));
     }
 
-    private int getPageSize() {
-        return (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) ? LANDSCAPE_PAGE_SIZE : PORTRAIT_PAGE_SIZE;
-    }
-
     private void handleBackAction() {
         if (isCheckoutPage) {
             showProductSelection();
@@ -194,6 +184,9 @@ public class BillingActivity extends AppCompatActivity
                 .setMessage("Are you sure you want to logout?")
                 .setPositiveButton("Logout", (d, w) -> {
                     getSharedPreferences("CafePrefs", MODE_PRIVATE).edit().clear().apply();
+                    Intent intent = new Intent(this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
                     finish();
                 })
                 .setNegativeButton("Cancel", null)
@@ -285,13 +278,7 @@ public class BillingActivity extends AppCompatActivity
     }
 
     private void updateProductList() {
-        int pageSize = getPageSize();
-        int start = productPage * pageSize;
-        int end = Math.min(start + pageSize, filteredProducts.size());
-        if (start < filteredProducts.size()) productAdapter.setProducts(filteredProducts.subList(start, end));
-        else productAdapter.setProducts(new ArrayList<>());
-        prevProductBtn.setVisibility(filteredProducts.size() > pageSize ? View.VISIBLE : View.GONE);
-        nextProductBtn.setVisibility(filteredProducts.size() > pageSize ? View.VISIBLE : View.GONE);
+        productAdapter.setProducts(filteredProducts);
         updateProductQuantities();
     }
 

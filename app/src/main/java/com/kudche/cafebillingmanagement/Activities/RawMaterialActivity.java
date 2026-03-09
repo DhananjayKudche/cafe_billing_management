@@ -1,8 +1,10 @@
 package com.kudche.cafebillingmanagement.Activities;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -38,6 +40,9 @@ public class RawMaterialActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
+        ImageButton logoutBtn = findViewById(R.id.logoutBtn);
+        logoutBtn.setOnClickListener(v -> showLogoutDialog());
+
         viewModel = new ViewModelProvider(this).get(RawMaterialViewModel.class);
 
         recyclerView = findViewById(R.id.rawRecycler);
@@ -72,6 +77,21 @@ public class RawMaterialActivity extends AppCompatActivity {
         fab.setOnClickListener(v -> {
             startActivity(new Intent(this, AddRawMaterialActivity.class));
         });
+    }
+
+    private void showLogoutDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setPositiveButton("Logout", (d, w) -> {
+                    getSharedPreferences("CafePrefs", MODE_PRIVATE).edit().clear().apply();
+                    Intent intent = new Intent(this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     @Override

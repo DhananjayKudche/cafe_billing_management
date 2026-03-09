@@ -40,6 +40,18 @@
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
+            <ImageButton
+                android:id="@+id/logoutBtn"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_logout"
+                app:tint="@color/white"
+                android:visibility="gone"
+                android:contentDescription="Logout" />
+
         </RelativeLayout>
     </androidx.cardview.widget.CardView>
 
@@ -52,35 +64,43 @@
         android:visibility="visible">
 
         <!-- Category Filter Chips -->
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/categoryChipGroup"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="12dp"
-            app:singleSelection="true"
-            app:selectionRequired="true"
-            app:chipSpacingHorizontal="8dp">
+            android:gravity="center"
+            android:padding="12dp">
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipCafe"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/categoryChipGroup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cafe Category"
-                app:chipBackgroundColor="@color/chip_background_selector"
-                android:textColor="@color/white"
-                android:checked="true" />
+                app:singleSelection="true"
+                app:selectionRequired="true"
+                app:chipSpacingHorizontal="16dp">
 
-            <com.google.android.material.chip.Chip
-                android:id="@+id/chipJuice"
-                style="@style/Widget.MaterialComponents.Chip.Choice"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Juice Category"
-                app:chipBackgroundColor="@color/chip_background_selector"
-                android:textColor="@color/white" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipCafe"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cafe Category"
+                    android:textSize="16sp"
+                    app:chipBackgroundColor="@color/chip_background_selector"
+                    android:textColor="@color/white"
+                    android:checked="true" />
 
-        </com.google.android.material.chip.ChipGroup>
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chipJuice"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Juice Category"
+                    android:textSize="16sp"
+                    app:chipBackgroundColor="@color/chip_background_selector"
+                    android:textColor="@color/white" />
+
+            </com.google.android.material.chip.ChipGroup>
+        </LinearLayout>
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -96,39 +116,11 @@
                 android:orientation="vertical"
                 android:padding="8dp">
 
-                <RelativeLayout
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/productRecycler"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/prevProductBtn"
-                        style="@style/Widget.Material3.Button.IconButton.Filled"
-                        android:layout_width="40dp"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentStart="true"
-                        android:backgroundTint="@color/cafe_medium"
-                        android:text="&lt;"
-                        android:visibility="gone" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/productRecycler"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_toEndOf="@id/prevProductBtn"
-                        android:layout_toStartOf="@id/nextProductBtn"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="4dp"/>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/nextProductBtn"
-                        style="@style/Widget.Material3.Button.IconButton.Filled"
-                        android:layout_width="40dp"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentEnd="true"
-                        android:backgroundTint="@color/cafe_medium"
-                        android:text="&gt;"
-                        android:visibility="gone" />
-                </RelativeLayout>
+                    android:layout_height="match_parent"
+                    android:scrollbars="vertical"/>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 

@@ -2,6 +2,8 @@ package com.kudche.cafebillingmanagement.Activities;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,6 +17,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.kudche.cafebillingmanagement.Models.RawMaterial;
 import com.kudche.cafebillingmanagement.R;
+import com.kudche.cafebillingmanagement.Utils.UnitConverter;
 import com.kudche.cafebillingmanagement.ViewModel.RawMaterialViewModel;
 
 public class AddRawMaterialActivity extends AppCompatActivity {
@@ -26,9 +29,13 @@ public class AddRawMaterialActivity extends AppCompatActivity {
     EditText stockInput;
 
     int materialId = -1;
-    RawMaterial existingMaterial;
-
-    String[] units = {"GRAM","ML","LITRE","KG","QUANTITY"};
+    String[] displayUnits = {
+            UnitConverter.UNIT_GRAM, 
+            UnitConverter.UNIT_KG, 
+            UnitConverter.UNIT_ML, 
+            UnitConverter.UNIT_LITER, 
+            UnitConverter.UNIT_PCS
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,16 +55,9 @@ public class AddRawMaterialActivity extends AppCompatActivity {
         Button addBtn = findViewById(R.id.addRawBtn);
         Button cancelBtn = findViewById(R.id.cancelBtn);
 
-        // Spinner setup
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_dropdown_item,
-                units
-        );
-
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, displayUnits);
         unitSpinner.setAdapter(adapter);
 
-        // Check if edit mode
         materialId = getIntent().getIntExtra("materialId", -1);
 
         if(materialId != -1){
@@ -67,9 +67,11 @@ public class AddRawMaterialActivity extends AppCompatActivity {
                 runOnUiThread(() -> {
                     if(material != null){
                         nameInput.setText(material.name);
+                        // Display in base unit for simplicity in edit mode
                         stockInput.setText(String.valueOf(material.currentStock));
-                        for(int i = 0; i < units.length; i++){
-                            if(units[i].equals(material.unit)){
+                        String baseUnit = material.unit;
+                        for(int i = 0; i < displayUnits.length; i++){
+                            if(displayUnits[i].equals(baseUnit)){
                                 unitSpinner.setSelection(i);
                                 break;
                             }
@@ -81,7 +83,7 @@ public class AddRawMaterialActivity extends AppCompatActivity {
 
         addBtn.setOnClickListener(v -> {
             String name = nameInput.getText().toString().trim();
-            String unit = unitSpinner.getSelectedItem().toString();
+            String selectedUnit = unitSpinner.getSelectedItem().toString();
             String stockStr = stockInput.getText().toString().trim();
 
             if(TextUtils.isEmpty(name) || TextUtils.isEmpty(stockStr)){
@@ -89,12 +91,15 @@ public class AddRawMaterialActivity extends AppCompatActivity {
                 return;
             }
 
-            double stock = Double.parseDouble(stockStr);
+            double inputValue = Double.parseDouble(stockStr);
+            // Convert to base unit (KG, LITER, PCS) before saving
+            double baseStock = UnitConverter.convertToBaseUnit(inputValue, selectedUnit);
+            String baseUnitName = UnitConverter.getBaseUnit(selectedUnit);
 
             RawMaterial material = new RawMaterial();
             material.name = name;
-            material.unit = unit;
-            material.currentStock = stock;
+            material.unit = baseUnitName; 
+            material.currentStock = baseStock;
 
             if(materialId == -1){
                 viewModel.insert(material);

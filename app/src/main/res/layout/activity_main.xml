@@ -16,6 +16,17 @@
         android:layout_marginTop="16dp"
         android:layout_marginBottom="24dp">
 
+        <ImageButton
+            android:id="@+id/ivLogout"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_logout"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/cafe_dark"
+            android:contentDescription="Logout" />
+
         <TextView
             android:id="@+id/tvAppName"
             android:layout_width="wrap_content"

@@ -11,12 +11,12 @@ public class RawMaterial {
 
     public String name;
 
-    public String unit; // GRAM / ML
+    public String unit; // KG, LITER, QUANTITY (Base units stored in DB)
 
-    public double currentStock;
+    public double currentStock; // Always stored in base units (KG, LITER, PCS)
 
     @Override
     public String toString() {
-        return name + " (" + unit + ")";
+        return name;
     }
 }

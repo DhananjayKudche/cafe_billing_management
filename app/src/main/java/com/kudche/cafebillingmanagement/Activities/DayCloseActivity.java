@@ -1,5 +1,6 @@
 package com.kudche.cafebillingmanagement.Activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.view.LayoutInflater;
@@ -7,10 +8,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -21,9 +24,13 @@ import com.kudche.cafebillingmanagement.Models.DayClose;
 import com.kudche.cafebillingmanagement.Models.DayCloseItem;
 import com.kudche.cafebillingmanagement.Models.RawMaterial;
 import com.kudche.cafebillingmanagement.R;
+import com.kudche.cafebillingmanagement.Utils.UnitConverter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.Executors;
 
 public class DayCloseActivity extends AppCompatActivity {
@@ -43,6 +50,9 @@ public class DayCloseActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
+        ImageButton logoutBtn = findViewById(R.id.logoutBtn);
+        logoutBtn.setOnClickListener(v -> showLogoutDialog());
+
         db = AppDatabase.getInstance(this);
         RecyclerView recyclerView = findViewById(R.id.reconcileRecycler);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -53,6 +63,21 @@ public class DayCloseActivity extends AppCompatActivity {
         findViewById(R.id.submitDayCloseBtn).setOnClickListener(v -> submitDayClose());
 
         loadMaterials();
+    }
+
+    private void showLogoutDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setPositiveButton("Logout", (d, w) -> {
+                    getSharedPreferences("CafePrefs", MODE_PRIVATE).edit().clear().apply();
+                    Intent intent = new Intent(this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
     @Override
@@ -68,6 +93,7 @@ public class DayCloseActivity extends AppCompatActivity {
         Executors.newSingleThreadExecutor().execute(() -> {
             List<RawMaterial> materials = db.rawMaterialDao().getAllSync();
             List<DayCloseItem> reconcileItems = new ArrayList<>();
+            Map<Integer, String> unitMap = new HashMap<>();
 
             for (RawMaterial rm : materials) {
                 DayCloseItem item = new DayCloseItem();
@@ -76,9 +102,13 @@ public class DayCloseActivity extends AppCompatActivity {
                 item.expectedStock = rm.currentStock;
                 item.actualStock = rm.currentStock; // Default to expected
                 reconcileItems.add(item);
+                unitMap.put(rm.id, rm.unit);
             }
 
-            runOnUiThread(() -> adapter.setItems(reconcileItems));
+            runOnUiThread(() -> {
+                adapter.setUnits(unitMap);
+                adapter.setItems(reconcileItems);
+            });
         });
     }
 
@@ -108,10 +138,15 @@ public class DayCloseActivity extends AppCompatActivity {
 
     private static class ReconcileAdapter extends RecyclerView.Adapter<ReconcileAdapter.ViewHolder> {
         private List<DayCloseItem> items = new ArrayList<>();
+        private Map<Integer, String> unitMap = new HashMap<>();
 
         public void setItems(List<DayCloseItem> items) {
             this.items = items;
             notifyDataSetChanged();
+        }
+
+        public void setUnits(Map<Integer, String> units) {
+            this.unitMap = units;
         }
 
         public List<DayCloseItem> getItems() {
@@ -129,15 +164,38 @@ public class DayCloseActivity extends AppCompatActivity {
         public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
             DayCloseItem item = items.get(position);
             holder.name.setText(item.materialName);
-            holder.expected.setText("Expected: " + item.expectedStock);
-            holder.actual.setText(String.valueOf(item.actualStock));
+            
+            String baseUnit = unitMap.get(item.rawMaterialId);
+            if (baseUnit == null) baseUnit = "";
 
+            double displayValue = item.expectedStock;
+            String displayUnit = baseUnit;
+
+            // Logical Display for System Stock
+            if (UnitConverter.UNIT_KG.equals(baseUnit) && item.expectedStock < 1.0) {
+                displayValue = UnitConverter.convertFromBaseUnit(item.expectedStock, UnitConverter.UNIT_GRAM);
+                displayUnit = UnitConverter.UNIT_GRAM;
+            } else if (UnitConverter.UNIT_LITER.equals(baseUnit) && item.expectedStock < 1.0) {
+                displayValue = UnitConverter.convertFromBaseUnit(item.expectedStock, UnitConverter.UNIT_ML);
+                displayUnit = UnitConverter.UNIT_ML;
+            }
+
+            holder.expected.setText(String.format(Locale.getDefault(), "%.2f %s", displayValue, displayUnit));
+            
+            // Actual Stock is edited in base units by default for simplicity, 
+            // but we can pre-fill it in display units if desired. 
+            // For now, let's keep it pre-filled with the same value as system stock.
+            holder.actual.setText(String.format(Locale.getDefault(), "%.2f", displayValue));
+            
+            final String finalDisplayUnit = displayUnit;
             holder.actual.addTextChangedListener(new android.text.TextWatcher() {
                 @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
                 @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
                 @Override public void afterTextChanged(Editable s) {
                     try {
-                        item.actualStock = Double.parseDouble(s.toString());
+                        double val = Double.parseDouble(s.toString());
+                        // Convert back to base unit for storage
+                        item.actualStock = UnitConverter.convertToBaseUnit(val, finalDisplayUnit);
                     } catch (Exception e) {
                         item.actualStock = 0;
                     }

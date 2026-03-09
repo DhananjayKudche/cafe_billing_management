@@ -27,6 +27,5 @@ import androidx.room.PrimaryKey;
         public int productId;
         public int rawMaterialId;
 
-        public double quantityRequired; // e.g. 50ml, 20gm
-
+        public double quantityRequired; // Stored in base unit (KG, LITER, PCS)
 }
