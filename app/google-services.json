@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "341722557205",
+    "project_id": "aarambh-cafe",
+    "storage_bucket": "aarambh-cafe.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:341722557205:android:8fc252cd6d689a0bd5571c",
+        "android_client_info": {
+          "package_name": "com.kudche.cafebillingmanagement"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYDXTMjYA9Hms3LgOl8vsSzvFJDlCr7h8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

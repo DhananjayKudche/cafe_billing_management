@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,7 +25,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Scope;
+import com.google.android.gms.tasks.Task;
 import com.google.api.services.drive.DriveScopes;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.kudche.cafebillingmanagement.BackupManager.DriveBackupManager;
@@ -40,6 +43,7 @@ import java.util.concurrent.TimeUnit;
 
 public class SettingsActivity extends AppCompatActivity {
 
+    private static final String TAG = "SettingsActivity";
     private TextView tvAccountName, tvLastBackup;
     private Button btnConnectDrive, btnBackupNow, btnRestoreData;
     private SwitchMaterial switchAutoBackup;
@@ -74,10 +78,25 @@ public class SettingsActivity extends AppCompatActivity {
         googleSignInLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
                 result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-                        GoogleSignIn.getSignedInAccountFromIntent(result.getData())
-                                .addOnSuccessListener(this::handleSignInSuccess)
-                                .addOnFailureListener(e -> Toast.makeText(this, "Sign in failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                    Intent data = result.getData();
+                    Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+                    try {
+                        GoogleSignInAccount account = task.getResult(ApiException.class);
+                        handleSignInSuccess(account);
+                    } catch (ApiException e) {
+                        int statusCode = e.getStatusCode();
+                        Log.e(TAG, "Sign-in failed. Status Code: " + statusCode, e);
+                        
+                        String message;
+                        switch (statusCode) {
+                            case 7: message = "Network Error. Check your internet."; break;
+                            case 10: message = "Developer Error (10): Likely SHA-1 or Package Name mismatch in Google Console."; break;
+                            case 12500: message = "Sign-in Failed (12500): Check if Google Play Services is updated or SHA-1 is correct."; break;
+                            case 12501: message = "Sign-in Cancelled by user."; break;
+                            case 12502: message = "Sign-in in progress elsewhere."; break;
+                            default: message = "Sign-in error (Code: " + statusCode + "). " + e.getLocalizedMessage(); break;
+                        }
+                        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
                     }
                 }
         );
@@ -88,7 +107,11 @@ public class SettingsActivity extends AppCompatActivity {
                     .requestScopes(new Scope(DriveScopes.DRIVE_FILE))
                     .build();
             GoogleSignInClient client = GoogleSignIn.getClient(this, gso);
-            googleSignInLauncher.launch(client.getSignInIntent());
+            
+            // Sign out first to ensure the account picker always shows up
+            client.signOut().addOnCompleteListener(task -> {
+                googleSignInLauncher.launch(client.getSignInIntent());
+            });
         });
 
         switchAutoBackup.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -145,9 +168,13 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void handleSignInSuccess(GoogleSignInAccount account) {
-        prefs.edit().putString("googleAccount", account.getEmail()).apply();
-        updateUI();
-        Toast.makeText(this, "Connected: " + account.getEmail(), Toast.LENGTH_SHORT).show();
+        if (account.getEmail() != null) {
+            prefs.edit().putString("googleAccount", account.getEmail()).apply();
+            updateUI();
+            Toast.makeText(this, "Connected: " + account.getEmail(), Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "Connected, but could not get email address.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void updateUI() {
